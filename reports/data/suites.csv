@@ -1,0 +1,33 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"
+:param :
+:return:
+","1011","test_login[正常登录]","test_case.Login","2026-05-31","failed","2026-05-31","TestLogin","test_login","",""
+"
+:param :
+:return:
+","964","test_login[输入非1开头的手机号码]","test_case.Login","2026-05-31","passed","2026-05-31","TestLogin","test_login","",""
+"
+:param :
+:return:
+","1008","test_login[输入错误的密码]","test_case.Login","2026-05-31","passed","2026-05-31","TestLogin","test_login","",""
+"
+:param :
+:return:
+","431","test_login[输入手机号码大于于11位]","test_case.Login","2026-05-31","broken","2026-05-31","TestLogin","test_login","",""
+"
+:param :
+:return:
+","1070","test_login[登录密码为空]","test_case.Login","2026-05-31","passed","2026-05-31","TestLogin","test_login","",""
+"
+:param :
+:return:
+","1040","test_login[输入手机号码小于11位]","test_case.Login","2026-05-31","passed","2026-05-31","TestLogin","test_login","",""
+"
+:param :
+:return:
+","978","test_login[手机号码首位包含空格]","test_case.Login","2026-05-31","passed","2026-05-31","TestLogin","test_login","",""
+"
+:param :
+:return:
+","1025","test_login[手机号码为空]","test_case.Login","2026-05-31","passed","2026-05-31","TestLogin","test_login","",""

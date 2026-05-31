@@ -1,0 +1,11 @@
+[32m[2026-05-31 15:50:18,237] [/Users/tanair/PytestAutoApi/logs/info-2026-05-31.log] [INFO]: 
+======================================================
+用例标题: 输入错误的密码
+请求路径: https://www.wanandroid.com/user/login
+请求方式: POST
+请求头:   {'User-Agent': 'python-requests/2.34.2', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive', 'Content-Type': 'multipart/form-data; boundary=13a46666846a4cd9b12f436fa8f464f5', 'Content-Length': '232'}
+请求内容: {'username': '18800000001', 'password': '12345'}
+接口响应内容: {"data":null,"errorCode":-1,"errorMsg":"账号密码不匹配！"}
+接口响应时长: 999 ms
+Http状态码: 200
+=====================================================[0m

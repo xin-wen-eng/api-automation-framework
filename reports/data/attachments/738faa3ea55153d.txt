@@ -1,0 +1,11 @@
+[32mINFO    [0m /Users/tanair/PytestAutoApi/logs/info-2026-05-31.log:log_decorator.py:42 
+======================================================
+用例标题: 输入手机号码小于11位
+请求路径: https://www.wanandroid.com/user/login
+请求方式: POST
+请求头:   {'User-Agent': 'python-requests/2.34.2', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive', 'Content-Type': 'multipart/form-data; boundary=23a923a0ec914a1b9a3bf6e5ef6d8ed9', 'Content-Length': '231'}
+请求内容: {'username': '1880000000', 'password': '12345'}
+接口响应内容: {"data":null,"errorCode":-1,"errorMsg":"账号密码不匹配！"}
+接口响应时长: 1026 ms
+Http状态码: 200
+=====================================================
