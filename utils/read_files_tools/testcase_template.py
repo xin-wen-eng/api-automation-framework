@@ -2,10 +2,9 @@
 # -*- coding: utf-8 -*-
 """
 # @Time    : 2022/4/25 20:02
-# @Author  : 余少琪
 # @Email   : 1603453211@qq.com
 # @File    : testcase_template
-# @describe: 用例模板
+# @describe: Test case template
 """
 
 import datetime
@@ -16,7 +15,7 @@ from utils.other_tools.exceptions import ValueNotFoundError
 
 
 def write_case(case_path, page):
-    """ 写入用例数据 """
+    """ Write test case data """
     with open(case_path, 'w', encoding="utf-8") as file:
         file.write(page)
 
@@ -26,13 +25,13 @@ def write_testcase_file(*, allure_epic, allure_feature, class_title,
     """
 
         :param allure_story:
-        :param file_name: 文件名称
-        :param allure_epic: 项目名称
-        :param allure_feature: 模块名称
-        :param class_title: 类名称
-        :param func_title: 函数名称
-        :param case_path: case 路径
-        :param case_ids: 用例ID
+        :param file_name: File name
+        :param allure_epic: Project name
+        :param allure_feature: Module name
+        :param class_title: Class name
+        :param func_title: Function name
+        :param case_path: case path
+        :param case_ids: Test case ID
         :return:
         """
     conf_data = GetYamlData(ensure_path_sep("\\common\\config.yaml")).get_yaml_data()
@@ -84,4 +83,4 @@ if __name__ == '__main__':
         if not os.path.exists(case_path):
             write_case(case_path=case_path, page=page)
     else:
-        raise ValueNotFoundError("real_time_update_test_cases 配置不正确，只能配置 True 或者 False")
+        raise ValueNotFoundError("real_time_update_test_cases is configured incorrectly, only True or False are allowed")

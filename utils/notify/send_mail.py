@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 # @Time   : 2022/3/29 14:57
-# @Author : 余少琪
-描述: 发送邮件
+Description: Send email
 """
 
 import smtplib
@@ -13,7 +12,7 @@ from utils import config
 
 
 class SendEmail:
-    """ 发送邮箱 """
+    """ Send email """
     def __init__(self, metrics: TestMetrics):
         self.metrics = metrics
         self.allure_data = AllureFileClean()
@@ -23,12 +22,12 @@ class SendEmail:
     def send_mail(cls, user_list: list, sub, content: str) -> None:
         """
 
-        @param user_list: 发件人邮箱
+        @param user_list: Sender email address
         @param sub:
-        @param content: 发送内容
+        @param content: Content to send
         @return:
         """
-        user = "余少琪" + "<" + config.email.send_user + ">"
+        user = "Xin Wen" + "<" + config.email.send_user + ">"
         message = MIMEText(content, _subtype='plain', _charset='utf-8')
         message['Subject'] = sub
         message['From'] = user
@@ -41,41 +40,41 @@ class SendEmail:
 
     def error_mail(self, error_message: str) -> None:
         """
-        执行异常邮件通知
-        @param error_message: 报错信息
+        Email notification for execution exceptions
+        @param error_message: Error information
         @return:
         """
         email = config.email.send_list
-        user_list = email.split(',')  # 多个邮箱发送，config文件中直接添加  '806029174@qq.com'
+        user_list = email.split(',')  # For multiple email recipients, add directly in the config file  '806029174@qq.com'
 
-        sub = config.project_name + "接口自动化执行异常通知"
-        content = f"自动化测试执行完毕，程序中发现异常，请悉知。报错信息如下：\n{error_message}"
+        sub = config.project_name + " API Automation Execution Exception Notification"
+        content = f"Automation test execution complete. An exception was found in the program, please be advised. Error details are as follows:\n{error_message}"
         self.send_mail(user_list, sub, content)
 
     def send_main(self) -> None:
         """
-        发送邮件
+        Send email
         :return:
         """
         email = config.email.send_list
-        user_list = email.split(',')  # 多个邮箱发送，yaml文件中直接添加  '806029174@qq.com'
+        user_list = email.split(',')  # For multiple email recipients, add directly in the yaml file  '806029174@qq.com'
 
-        sub = config.project_name + "接口自动化报告"
+        sub = config.project_name + " API Automation Report"
         content = f"""
-        各位同事, 大家好:
-            自动化用例执行完成，执行结果如下:
-            用例运行总数: {self.metrics.total} 个
-            通过用例个数: {self.metrics.passed} 个
-            失败用例个数: {self.metrics.failed} 个
-            异常用例个数: {self.metrics.broken} 个
-            跳过用例个数: {self.metrics.skipped} 个
-            成  功   率: {self.metrics.pass_rate} %
+        Dear colleagues, hello:
+            Automation test cases have finished executing. The results are as follows:
+            Total cases run: {self.metrics.total}
+            Passed cases: {self.metrics.passed}
+            Failed cases: {self.metrics.failed}
+            Broken cases: {self.metrics.broken}
+            Skipped cases: {self.metrics.skipped}
+            Pass rate: {self.metrics.pass_rate} %
 
         {self.allure_data.get_failed_cases_detail()}
 
         **********************************
-        jenkins地址：https://121.xx.xx.47:8989/login
-        详细情况可登录jenkins平台查看，非相关负责人员可忽略此消息。谢谢。
+        Jenkins address: https://121.xx.xx.47:8989/login
+        For details, please log in to the Jenkins platform. Personnel not involved may disregard this message. Thank you.
         """
         self.send_mail(user_list, sub, content)
 

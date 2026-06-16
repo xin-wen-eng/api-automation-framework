@@ -1,29 +1,29 @@
-# 公共参数
+# Common parameters
 case_common:
-  allureEpic: 开发平台接口
-  allureFeature: 收藏模块
-  allureStory: 编辑收藏网址接口
+  allureEpic: Developer Platform API
+  allureFeature: Favorites Module
+  allureStory: Edit Favorite URL Interface
 
 collect_update_tool_01:
     host: ${{host()}}
     url: /lg/collect/addtool/json
     method: POST
-    detail: 编辑收藏网址
+    detail: Edit favorite URL
     headers:
       Content-Type: multipart/form-data;
-      # 这里cookie的值，写的是存入缓存的名称
+      # The value of cookie here is the name stored in cache
       cookie: $cache{login_cookie}
-    # 请求的数据，是 params 还是 json、或者file、data
+    # Request data type: params, json, file, or data
     requestType: data
-    # 是否执行，空或者 true 都会执行
+    # Whether to execute; empty or true will both execute
     is_run: False
     data:
-      name: 自动化编辑网址名称
+      name: Automation edit URL name
       link: https://gitee.com/yu_xiao_qi/pytest-auto-api2
       id:
-    # 是否有依赖业务，为空或者false则表示没有
+    # Whether there are dependent cases; empty or false means none
     dependence_case: True
-    # 依赖的数据
+    # Dependent data
     dependence_case_data:
       - case_id: collect_addtool_01
         dependent_data:
@@ -31,7 +31,7 @@ collect_update_tool_01:
             jsonpath: $.data.id
             replace_key: $.data.id
     assert:
-      # 断言接口状态码
+      # Assert interface status code
       errorCode:
         jsonpath: $.errorCode
         type: ==
@@ -40,21 +40,17 @@ collect_update_tool_01:
     sql:
     teardown:
 
-      # 先搜索
+      # Search first
       - case_id: collect_tool_list_01
         param_prepare:
           - dependent_type: self_response
             jsonpath: $.data[-1:].id
             set_cache: $set_cache{artile_id}
 
-      # 删除
+      # Delete
       - case_id: collect_delete_tool_01
         send_request:
-          # 删除从缓存中拿数据
+          # Delete: get data from cache
           - dependent_type: cache
             cache_data: int:artile_id
             replace_key: $.data.id
-
-
-
-

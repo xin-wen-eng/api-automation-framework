@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # @Time   : 2022/3/28 15:30
-# @Author : 余少琪
 """
-钉钉通知封装
+DingTalk notification wrapper
 """
 import base64
 import hashlib
@@ -18,20 +17,20 @@ from utils import config
 
 
 class DingTalkSendMsg:
-    """ 发送钉钉通知 """
+    """ Send DingTalk notification """
     def __init__(self, metrics: TestMetrics):
         self.metrics = metrics
         self.timeStamp = str(round(time.time() * 1000))
 
     def xiao_ding(self):
         sign = self.get_sign()
-        # 从yaml文件中获取钉钉配置信息
+        # Get DingTalk configuration from yaml file
         webhook = config.ding_talk.webhook + "&timestamp=" + self.timeStamp + "&sign=" + sign
         return DingtalkChatbot(webhook)
 
     def get_sign(self) -> Text:
         """
-        根据时间戳 + "sign" 生成密钥
+        Generate secret key based on timestamp + "sign"
         :return:
         """
         string_to_sign = f'{self.timeStamp}\n{config.ding_talk.secret}'.encode('utf-8')
@@ -49,9 +48,9 @@ class DingTalkSendMsg:
             mobiles=None
     ) -> None:
         """
-        发送文本信息
-        :param msg: 文本内容
-        :param mobiles: 艾特用户电话
+        Send text message
+        :param msg: text content
+        :param mobiles: phone numbers to mention
         :return:
         """
         if not mobiles:
@@ -60,7 +59,7 @@ class DingTalkSendMsg:
             if isinstance(mobiles, list):
                 self.xiao_ding().send_text(msg=msg, at_mobiles=mobiles)
             else:
-                raise TypeError("mobiles类型错误 不是list类型.")
+                raise TypeError("mobiles type error, not a list type.")
 
     def send_link(
             self,
@@ -70,7 +69,7 @@ class DingTalkSendMsg:
             pic_url: Text
     ) -> None:
         """
-        发送link通知
+        Send link notification
         :return:
         """
         self.xiao_ding().send_link(
@@ -93,7 +92,7 @@ class DingTalkSendMsg:
         :param mobiles:
         :param title:
         :param msg:
-        markdown 格式
+        markdown format
         """
 
         if mobiles is None:
@@ -102,7 +101,7 @@ class DingTalkSendMsg:
             if isinstance(mobiles, list):
                 self.xiao_ding().send_markdown(title=title, text=msg, at_mobiles=mobiles)
             else:
-                raise TypeError("mobiles类型错误 不是list类型.")
+                raise TypeError("mobiles type error, not a list type.")
 
     @staticmethod
     def feed_link(
@@ -110,7 +109,7 @@ class DingTalkSendMsg:
             message_url: Text,
             pic_url: Text
     ) -> Any:
-        """ FeedLink 二次封装 """
+        """ FeedLink secondary wrapper """
         return FeedLink(
             title=title,
             message_url=message_url,
@@ -118,32 +117,32 @@ class DingTalkSendMsg:
         )
 
     def send_feed_link(self, *arg) -> None:
-        """发送 feed_lik """
+        """Send feed_link """
 
         self.xiao_ding().send_feed_card(list(arg))
 
     def send_ding_notification(self):
-        """ 发送钉钉报告通知 """
-        # 判断如果有失败的用例，@所有人
+        """ Send DingTalk report notification """
+        # If there are failed test cases, mention everyone
         is_at_all = False
         if self.metrics.failed + self.metrics.broken > 0:
             is_at_all = True
-        text = f"#### {config.project_name}自动化通知  " \
-               f"\n\n>Python脚本任务: {config.project_name}" \
-               f"\n\n>环境: TEST\n\n>" \
-               f"执行人: {config.tester_name}" \
-               f"\n\n>执行结果: {self.metrics.pass_rate}% " \
-               f"\n\n>总用例数: {self.metrics.total} " \
-               f"\n\n>成功用例数: {self.metrics.passed}" \
-               f" \n\n>失败用例数: {self.metrics.failed} " \
-               f" \n\n>异常用例数: {self.metrics.broken} " \
-               f"\n\n>跳过用例数: {self.metrics.skipped}" \
+        text = f"#### {config.project_name} Automation Notification  " \
+               f"\n\n>Python Script Task: {config.project_name}" \
+               f"\n\n>Environment: TEST\n\n>" \
+               f"Executor: {config.tester_name}" \
+               f"\n\n>Execution Result: {self.metrics.pass_rate}% " \
+               f"\n\n>Total Cases: {self.metrics.total} " \
+               f"\n\n>Passed Cases: {self.metrics.passed}" \
+               f" \n\n>Failed Cases: {self.metrics.failed} " \
+               f" \n\n>Broken Cases: {self.metrics.broken} " \
+               f"\n\n>Skipped Cases: {self.metrics.skipped}" \
                f" ![screenshot](" \
                f"https://img.alicdn.com/tfs/TB1NwmBEL9TBuNjy1zbXXXpepXa-2400-1218.png" \
                f")\n" \
-               f" > ###### 测试报告 [详情](http://{get_host_ip()}:9999/index.html) \n"
+               f" > ###### Test Report [Details](http://{get_host_ip()}:9999/index.html) \n"
         DingTalkSendMsg(AllureFileClean().get_case_count()).send_markdown(
-            title="【接口自动化通知】",
+            title="[API Automation Notification]",
             msg=text,
             is_at_all=is_at_all
         )

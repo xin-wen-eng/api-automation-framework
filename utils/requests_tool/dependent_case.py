@@ -1,6 +1,5 @@
 """
 # @Time   : 2022/3/28 16:08
-# @Author : 余少琪
 """
 import ast
 import json
@@ -19,7 +18,7 @@ from utils import config
 
 
 class DependentCase:
-    """ 处理依赖相关的业务 """
+    """ Handle dependency-related business logic """
 
     def __init__(self, dependent_yaml_case: TestCase):
         self.__yaml_case = dependent_yaml_case
@@ -27,7 +26,7 @@ class DependentCase:
     @classmethod
     def get_cache(cls, case_id: Text) -> Dict:
         """
-        获取缓存用例池中的数据，通过 case_id 提取
+        Retrieve data from the cache case pool by case_id
         :param case_id:
         :return: case_id_01
         """
@@ -40,26 +39,26 @@ class DependentCase:
             obj: Dict,
             expr: Text) -> list:
         """
-        通过jsonpath提取依赖的数据
-        :param obj: 对象信息
-        :param expr: jsonpath 方法
-        :return: 提取到的内容值,返回是个数组
+        Extract dependent data via jsonpath
+        :param obj: object information
+        :param expr: jsonpath expression
+        :return: extracted content value, returned as an array
 
-        对象: {"data": applyID} --> jsonpath提取方法: $.data.data.[0].applyId
+        Object: {"data": applyID} --> jsonpath extraction method: $.data.data.[0].applyId
         """
 
         _jsonpath_data = jsonpath(obj, expr)
-        # 判断是否正常提取到数据，如未提取到，则抛异常
+        # Check if data was extracted successfully; raise exception if not
         if _jsonpath_data is False:
             raise ValueNotFoundError(
-                f"jsonpath提取失败！\n 提取的数据: {obj} \n jsonpath规则: {expr}"
+                f"jsonpath extraction failed!\n Extracted data: {obj} \n jsonpath rule: {expr}"
             )
         return _jsonpath_data
 
     @classmethod
     def set_cache_value(cls, dependent_data: "DependentData") -> Union[Text, None]:
         """
-        获取依赖中是否需要将数据存入缓存中
+        Check whether the dependency data needs to be stored in cache
         """
         try:
             return dependent_data.set_cache
@@ -68,7 +67,7 @@ class DependentCase:
 
     @classmethod
     def replace_key(cls, dependent_data: "DependentData"):
-        """ 获取需要替换的内容 """
+        """ Get the content that needs to be replaced """
         try:
             _replace_key = dependent_data.replace_key
             return _replace_key
@@ -81,13 +80,13 @@ class DependentCase:
             jsonpath_dates: Dict,
             jsonpath_data: list) -> None:
         """
-        url中的动态参数替换
-        # 如: 一般有些接口的参数在url中,并且没有参数名称, /api/v1/work/spu/approval/spuApplyDetails/{id}
-        # 那么可以使用如下方式编写用例, 可以使用 $url_params{}替换,
-        # 如/api/v1/work/spu/approval/spuApplyDetails/$url_params{id}
-        :param jsonpath_data: jsonpath 解析出来的数据值
-        :param replace_key: 用例中需要替换数据的 replace_key
-        :param jsonpath_dates: jsonpath 存放的数据值
+        Replace dynamic parameters in the URL
+        # For example: some interface parameters are in the URL without parameter names, /api/v1/work/spu/approval/spuApplyDetails/{id}
+        # In that case, write the test case as follows, using $url_params{} for replacement,
+        # e.g. /api/v1/work/spu/approval/spuApplyDetails/$url_params{id}
+        :param jsonpath_data: data values parsed by jsonpath
+        :param replace_key: the replace_key in the test case for data replacement
+        :param jsonpath_dates: data values stored by jsonpath
         :return:
         """
 
@@ -103,13 +102,13 @@ class DependentCase:
             dependence_case_data: "DependentCaseData",
             jsonpath_dates: Dict) -> None:
         """
-        判断依赖类型为 sql，程序中的依赖参数从 数据库中提取数据
-        @param setup_sql: 前置sql语句
-        @param dependence_case_data: 依赖的数据
-        @param jsonpath_dates: 依赖相关的用例数据
+        Handle dependency type as sql - extract dependent parameters from the database
+        @param setup_sql: pre-condition SQL statements
+        @param dependence_case_data: dependent case data
+        @param jsonpath_dates: dependent related test case data
         @return:
         """
-        # 判断依赖数据类型，依赖 sql中的数据
+        # Check dependency data type - depends on data from sql
         if setup_sql is not None:
             if config.mysql_db.switch:
                 setup_sql = ast.literal_eval(cache_regular(str(setup_sql)))
@@ -131,7 +130,7 @@ class DependentCase:
                             jsonpath_data=jsonpath_data,
                         )
             else:
-                WARNING.logger.warning("检查到数据库开关为关闭状态，请确认配置")
+                WARNING.logger.warning("Database switch detected as off, please verify the configuration")
 
     def dependent_handler(
             self,
@@ -142,7 +141,7 @@ class DependentCase:
             data: Dict,
             dependent_type: int
     ) -> None:
-        """ 处理数据替换 """
+        """ Handle data replacement """
         jsonpath_data = self.jsonpath_data(
             data,
             _jsonpath
@@ -160,24 +159,24 @@ class DependentCase:
 
     def is_dependent(self) -> Union[Dict, bool]:
         """
-        判断是否有数据依赖
+        Check whether there is data dependency
         :return:
         """
 
-        # 获取用例中的dependent_type值，判断该用例是否需要执行依赖
+        # Get the dependent_type value from the test case to determine if dependency execution is needed
         _dependent_type = self.__yaml_case.dependence_case
-        # 获取依赖用例数据
+        # Get dependent case data
         _dependence_case_dates = self.__yaml_case.dependence_case_data
         _setup_sql = self.__yaml_case.setup_sql
-        # 判断是否有依赖
+        # Check if there is a dependency
         if _dependent_type is True:
-            # 读取依赖相关的用例数据
+            # Read dependency-related test case data
             jsonpath_dates = {}
-            # 循环所有需要依赖的数据
+            # Iterate over all data that needs to be depended on
             try:
                 for dependence_case_data in _dependence_case_dates:
                     _case_id = dependence_case_data.case_id
-                    # 判断依赖数据为sql，case_id需要写成self，否则程序中无法获取case_id
+                    # If dependency data is sql, case_id must be written as self; otherwise the program cannot get the case_id
                     if _case_id == 'self':
                         self._dependent_type_for_sql(
                             setup_sql=_setup_sql,
@@ -196,7 +195,7 @@ class DependentCase:
                                 _request_data = self.__yaml_case.data
                                 _replace_key = self.replace_key(i)
                                 _set_value = self.set_cache_value(i)
-                                # 判断依赖数据类型, 依赖 response 中的数据
+                                # Check dependency data type - depends on data from response
                                 if i.dependent_type == DependentType.RESPONSE.value:
                                     self.dependent_handler(
                                         data=json.loads(res.response_data),
@@ -207,7 +206,7 @@ class DependentCase:
                                         dependent_type=0
                                     )
 
-                                # 判断依赖数据类型, 依赖 request 中的数据
+                                # Check dependency data type - depends on data from request
                                 elif i.dependent_type == DependentType.REQUEST.value:
                                     self.dependent_handler(
                                         data=res.body,
@@ -220,41 +219,41 @@ class DependentCase:
 
                                 else:
                                     raise ValueError(
-                                        "依赖的dependent_type不正确，只支持request、response、sql依赖\n"
-                                        f"当前填写内容: {i.dependent_type}"
+                                        "The dependent_type is incorrect; only request, response, and sql dependencies are supported\n"
+                                        f"Current value: {i.dependent_type}"
                                     )
                 return jsonpath_dates
             except KeyError as exc:
                 # pass
                 raise ValueNotFoundError(
-                    f"dependence_case_data依赖用例中，未找到 {exc} 参数，请检查是否填写"
-                    f"如已填写，请检查是否存在yaml缩进问题"
+                    f"In dependence_case_data, the parameter {exc} was not found. Please check if it has been filled in. "
+                    f"If already filled in, please check for yaml indentation issues"
                 ) from exc
             except TypeError as exc:
                 raise ValueNotFoundError(
-                    "dependence_case_data下的所有内容均不能为空！"
-                    "请检查相关数据是否填写，如已填写，请检查缩进问题"
+                    "All content under dependence_case_data cannot be empty! "
+                    "Please check whether the relevant data has been filled in. If already filled in, please check for indentation issues"
                 ) from exc
         else:
             return False
 
     def get_dependent_data(self) -> None:
         """
-        jsonpath 和 依赖的数据,进行替换
+        Replace data using jsonpath and dependent data
         :return:
         """
         _dependent_data = DependentCase(self.__yaml_case).is_dependent()
         _new_data = None
-        # 判断有依赖
+        # Check if there is a dependency
         if _dependent_data is not None and _dependent_data is not False:
             # if _dependent_data is not False:
             for key, value in _dependent_data.items():
-                # 通过jsonpath判断出需要替换数据的位置
+                # Use jsonpath to determine the location of the data to be replaced
                 _change_data = key.split(".")
-                # jsonpath 数据解析
-                # 不要删 这个yaml_case
+                # jsonpath data parsing
+                # Do not delete this yaml_case
                 yaml_case = self.__yaml_case
                 _new_data = jsonpath_replace(change_data=_change_data, key_name='yaml_case')
-                # 最终提取到的数据,转换成 __yaml_case.data
+                # Final extracted data, converted to __yaml_case.data
                 _new_data += ' = ' + str(value)
                 exec(_new_data)

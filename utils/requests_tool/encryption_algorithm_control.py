@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 """
 # @Time    : 2022/5/23 21:27
-# @Author  : 余少琪
 # @Email   : 1603453211@qq.com
 # @File    : encryption_algorithm_control
 # @describe:
@@ -17,7 +16,7 @@ from pyDes import des, ECB, PAD_PKCS5
 
 
 def hmac_sha256_encrypt(key, data):
-    """hmac sha 256算法"""
+    """hmac sha 256 algorithm"""
     _key = key.encode('utf8')
     _data = data.encode('utf8')
     encrypt_data = hmac.new(_key, _data, digestmod=sha256).hexdigest()
@@ -25,14 +24,14 @@ def hmac_sha256_encrypt(key, data):
 
 
 def md5_encryption(value):
-    """ md5 加密"""
+    """ md5 encryption"""
     str_md5 = hashlib.md5(str(value).encode(encoding='utf-8')).hexdigest()
     return str_md5
 
 
 def sha1_secret_str(_str: Text):
     """
-    使用sha1加密算法，返回str加密后的字符串
+    Use the sha1 encryption algorithm to return the encrypted string of str
     """
     encrypts = hashlib.sha1(_str.encode('utf-8')).hexdigest()
     return encrypts
@@ -40,10 +39,10 @@ def sha1_secret_str(_str: Text):
 
 def des_encrypt(_str):
     """
-    DES 加密
-    :return: 加密后字符串，16进制
+    DES encryption
+    :return: encrypted string in hexadecimal
     """
-    # 密钥，自行修改
+    # Key, modify as needed
     _key = 'PASSWORD'
     secret_key = _key
     _iv = secret_key
@@ -54,7 +53,7 @@ def des_encrypt(_str):
 
 def encryption(ency_type):
     """
-    :param ency_type: 加密类型
+    :param ency_type: encryption type
     :return:
     """
 
@@ -71,7 +70,7 @@ def encryption(ency_type):
                             else:
                                 data[key] = md5_encryption(value)
             else:
-                raise ValueError("暂不支持该加密规则，如有需要，请联系管理员")
+                raise ValueError("This encryption rule is not currently supported. If needed, please contact the administrator")
             ency_value(_data)
             return res
 

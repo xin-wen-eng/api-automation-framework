@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 """
 # @Time   : 2022/4/7 17:53
-# @Author : 余少琪
 """
 import json
 import allure
@@ -11,8 +10,8 @@ from utils.other_tools.models import AllureAttachmentType
 
 def allure_step(step: str, var: str) -> None:
     """
-    :param step: 步骤及附件名称
-    :param var: 附件内容
+    :param step: Step and attachment name
+    :param var: Attachment content
     """
     with allure.step(step):
         allure.attach(
@@ -26,13 +25,13 @@ def allure_step(step: str, var: str) -> None:
 
 def allure_attach(source: str, name: str, extension: str):
     """
-    allure报告上传附件、图片、excel等
-    :param source: 文件路径，相当于传一个文件
-    :param name: 附件名称
-    :param extension: 附件的拓展名称
+    Upload attachments, images, excel files, etc. to the allure report
+    :param source: File path, equivalent to passing a file
+    :param name: Attachment name
+    :param extension: Attachment extension name
     :return:
     """
-    # 获取上传附件的尾缀，判断对应的 attachment_type 枚举值
+    # Get the suffix of the uploaded attachment to determine the corresponding attachment_type enum value
     _name = name.split('.')[-1].upper()
     _attachment_type = getattr(AllureAttachmentType, _name, None)
 
@@ -46,8 +45,8 @@ def allure_attach(source: str, name: str, extension: str):
 
 def allure_step_no(step: str):
     """
-    无附件的操作步骤
-    :param step: 步骤名称
+    Operation step with no attachment
+    :param step: Step name
     :return:
     """
     with allure.step(step):

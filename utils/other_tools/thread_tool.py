@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 """
 # @Time   : 2022/3/28 10:52
-# @Author : 余少琪
 """
 
 
@@ -11,10 +10,10 @@ import threading
 
 
 class PyTimer:
-    """定时器类"""
+    """Timer class"""
 
     def __init__(self, func, *args, **kwargs):
-        """构造函数"""
+        """Constructor"""
 
         self.func = func
         self.args = args
@@ -22,14 +21,14 @@ class PyTimer:
         self.running = False
 
     def _run_func(self):
-        """运行定时事件函数"""
+        """Run the timed event function"""
 
         _thread = threading.Thread(target=self.func, args=self.args, kwargs=self.kwargs)
         _thread.setDaemon(True)
         _thread.start()
 
     def _start(self, interval, once):
-        """启动定时器的线程函数"""
+        """Thread function to start the timer"""
 
         interval = max(interval, 0.01)
 
@@ -43,7 +42,7 @@ class PyTimer:
             while time.time() < deadline:
                 time.sleep(_dt)
 
-            # 定时时间到，调用定时事件函数
+            # Timer elapsed, call the timed event function
             self._run_func()
         else:
             self.running = True
@@ -52,18 +51,18 @@ class PyTimer:
                 while time.time() < deadline:
                     time.sleep(_dt)
 
-                # 更新下一次定时时间
+                # Update the next timer deadline
                 deadline += interval
 
-                # 定时时间到，调用定时事件函数
+                # Timer elapsed, call the timed event function
                 if self.running:
                     self._run_func()
 
     def start(self, interval, once=False):
-        """启动定时器
+        """Start the timer
 
-        interval    - 定时间隔，浮点型，以秒为单位，最高精度10毫秒
-        once        - 是否仅启动一次，默认是连续的
+        interval    - Timer interval, float, in seconds, maximum precision 10 milliseconds
+        once        - Whether to run only once, default is continuous
         """
 
         thread_ = threading.Thread(target=self._start, args=(interval, once))
@@ -71,21 +70,21 @@ class PyTimer:
         thread_.start()
 
     def stop(self):
-        """停止定时器"""
+        """Stop the timer"""
 
         self.running = False
 
 
 def do_something(name, gender='male'):
-    """执行"""
-    print(time.time(), '定时时间到，执行特定任务')
+    """Execute"""
+    print(time.time(), 'Timer elapsed, executing specific task')
     print('name:%s, gender:%s', name, gender)
     time.sleep(5)
-    print(time.time(), '完成特定任务')
+    print(time.time(), 'Specific task completed')
 
 
 timer = PyTimer(do_something, 'Alice', gender='female')
 timer.start(0.5, once=False)
 
-input('按回车键结束\n')  # 此处阻塞住进程
+input('Press Enter to exit\n')  # Block the process here
 timer.stop()

@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 """
 # @Time   : 2022/3/28 15:26
-# @Author : 余少琪
 """
 
 import json
@@ -14,9 +13,9 @@ from common.setting import ensure_path_sep
 
 def get_excel_data(sheet_name: str, case_name: any) -> list:
     """
-    读取 Excel 中的数据
-    :param sheet_name: excel 中的 sheet 页的名称
-    :param case_name: 测试用例名称
+    Read data from Excel
+    :param sheet_name: the name of the sheet in excel
+    :param case_name: test case name
     :return:
     """
     res_list = []
@@ -24,12 +23,12 @@ def get_excel_data(sheet_name: str, case_name: any) -> list:
     excel_dire = ensure_path_sep("\\data\\TestLogin.xls")
     work_book = xlrd.open_workbook(excel_dire, formatting_info=True)
 
-    # 打开对应的子表
+    # Open the corresponding sub-sheet
     work_sheet = work_book.sheet_by_name(sheet_name)
-    # 读取一行
+    # Read one row
     idx = 0
     for one in work_sheet.col_values(0):
-        # 运行需要运行的测试用例
+        # Run the test cases that need to be run
         if case_name in one:
             req_body_data = work_sheet.cell(idx, 9).value
             resp_data = work_sheet.cell(idx, 11).value
@@ -40,7 +39,7 @@ def get_excel_data(sheet_name: str, case_name: any) -> list:
 
 def set_excel_data(sheet_index: int) -> tuple:
     """
-    excel 写入
+    Excel write
     :return:
     """
     excel_dire = '../data/TestLogin.xls'
@@ -52,4 +51,4 @@ def set_excel_data(sheet_index: int) -> tuple:
 
 
 if __name__ == '__main__':
-    get_excel_data("异常用例", '111')
+    get_excel_data("Exception Cases", '111')

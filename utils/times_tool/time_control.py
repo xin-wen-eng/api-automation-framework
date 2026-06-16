@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 """
 # @Time   : 2022/3/28 15:47
-# @Author : 余少琪
 """
 
 import time
@@ -12,7 +11,7 @@ from datetime import datetime
 
 def count_milliseconds():
     """
-    计算时间
+    Calculate time
     :return:
     """
     access_start = datetime.now()
@@ -23,8 +22,8 @@ def count_milliseconds():
 
 def timestamp_conversion(time_str: Text) -> int:
     """
-    时间戳转换，将日期格式转换成时间戳
-    :param time_str: 时间
+    Timestamp conversion, convert date format to timestamp
+    :param time_str: time
     :return:
     """
 
@@ -36,12 +35,12 @@ def timestamp_conversion(time_str: Text) -> int:
         )
         return timestamp
     except ValueError as exc:
-        raise ValueError('日期格式错误, 需要传入得格式为 "%Y-%m-%d %H:%M:%S" ') from exc
+        raise ValueError('Date format error, the required format is "%Y-%m-%d %H:%M:%S" ') from exc
 
 
 def time_conversion(time_num: int):
     """
-    时间戳转换成日期
+    Convert timestamp to date
     :param time_num:
     :return:
     """
@@ -54,7 +53,7 @@ def time_conversion(time_num: int):
 
 def now_time():
     """
-    获取当前时间, 日期格式: 2021-12-11 12:39:25
+    Get current time, date format: 2021-12-11 12:39:25
     :return:
     """
     localtime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
@@ -63,7 +62,7 @@ def now_time():
 
 def now_time_day():
     """
-    获取当前时间, 日期格式: 2021-12-11
+    Get current time, date format: 2021-12-11
     :return:
     """
     localtime = time.strftime("%Y-%m-%d", time.localtime())
@@ -72,16 +71,16 @@ def now_time_day():
 
 def get_time_for_min(minute: int) -> int:
     """
-    获取几分钟后的时间戳
-    @param minute: 分钟
-    @return: N分钟后的时间戳
+    Get the timestamp N minutes from now
+    @param minute: minutes
+    @return: timestamp N minutes from now
     """
     return int(time.time() + 60 * minute) * 1000
 
 
 def get_now_time() -> int:
     """
-    获取当前时间戳, 整形
-    @return: 当前时间戳
+    Get current timestamp, integer
+    @return: current timestamp
     """
     return int(time.time()) * 1000

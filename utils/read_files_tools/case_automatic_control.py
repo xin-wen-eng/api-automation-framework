@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 """
 # @Time   : 2022/3/28 13:22
-# @Author : 余少琪
 """
 import os
 from typing import Text, Dict
@@ -14,28 +13,28 @@ from utils.other_tools.exceptions import ValueNotFoundError
 
 
 class TestCaseAutomaticGeneration:
-    """自动生成自动化测试中的test_case代码"""
+    """Automatically generate test_case code for automated testing"""
 
     @staticmethod
     def case_date_path() -> Text:
-        """返回 yaml 用例文件路径"""
+        """Return the yaml test case file path"""
         return ensure_path_sep("\\data")
 
     @staticmethod
     def case_path() -> Text:
-        """ 存放用例代码路径"""
+        """ Path for storing test case code"""
         return ensure_path_sep("\\test_case")
 
     def file_name(self, file: Text) -> Text:
         """
-        通过 yaml文件的命名，将名称转换成 py文件的名称
-        :param file: yaml 文件路径
-        :return:  示例： DateDemo.py
+        Convert the yaml file name to a py file name
+        :param file: yaml file path
+        :return:  Example: DateDemo.py
         """
         i = len(self.case_date_path())
         yaml_path = file[i:]
         file_name = None
-        # 路径转换
+        # Path conversion
         if '.yaml' in yaml_path:
             file_name = yaml_path.replace('.yaml', '.py')
         elif '.yml' in yaml_path:
@@ -44,29 +43,29 @@ class TestCaseAutomaticGeneration:
 
     def get_case_path(self, file_path: Text) -> tuple:
         """
-        根据 yaml 中的用例，生成对应 testCase 层代码的路径
-        :param file_path: yaml用例路径
+        Generate the corresponding testCase layer code path based on yaml test cases
+        :param file_path: yaml test case path
         :return: D:\\Project\\test_case\\test_case_demo.py, test_case_demo.py
         """
 
-        # 这里通过“\\” 符号进行分割，提取出来文件名称
+        # Split by "\\" to extract the file name
         path = self.file_name(file_path).split(os.sep)
-        # 判断生成的 testcase 文件名称，需要以test_ 开头
+        # Ensure the generated testcase file name starts with test_
         case_name = path[-1] = path[-1].replace(path[-1], "test_" + path[-1])
         new_name = os.sep.join(path)
         return ensure_path_sep("\\test_case" + new_name), case_name
 
     def get_test_class_title(self, file_path: Text) -> Text:
         """
-        自动生成类名称
+        Automatically generate class name
         :param file_path:
         :return: sup_apply_list --> SupApplyList
         """
-        # 提取文件名称
+        # Extract file name
         _file_name = os.path.split(self.file_name(file_path))[1][:-3]
         _name = _file_name.split("_")
         _name_len = len(_name)
-        # 将文件名称格式，转换成类名称: sup_apply_list --> SupApplyList
+        # Convert file name format to class name: sup_apply_list --> SupApplyList
         for i in range(_name_len):
             _name[i] = _name[i].capitalize()
         _class_name = "".join(_name)
@@ -76,18 +75,18 @@ class TestCaseAutomaticGeneration:
     @staticmethod
     def error_message(param_name, file_path):
         """
-        用例中填写不正确的相关提示
+        Hint message for incorrectly filled test case fields
         :return:
         """
-        msg = f"用例中未找到 {param_name} 参数值，请检查新增的用例中是否填写对应的参数内容" \
-              "如已填写，可能是 yaml 参数缩进不正确\n" \
-              f"用例路径: {file_path}"
+        msg = f"Parameter '{param_name}' not found in test case. Please check whether the corresponding parameter is filled in the newly added test case." \
+              "If already filled, the yaml parameter indentation may be incorrect.\n" \
+              f"Test case path: {file_path}"
         return msg
 
     def func_title(self, file_path: Text) -> Text:
         """
-        函数名称
-        :param file_path: yaml 用例路径
+        Function name
+        :param file_path: yaml test case path
         :return:
         """
 
@@ -97,9 +96,9 @@ class TestCaseAutomaticGeneration:
     @staticmethod
     def allure_epic(case_data: Dict, file_path) -> Text:
         """
-        用于 allure 报告装饰器中的内容 @allure.epic("项目名称")
-        :param file_path: 用例路径
-        :param case_data: 用例数据
+        Content for allure report decorator @allure.epic("project name")
+        :param file_path: test case path
+        :param case_data: test case data
         :return:
         """
         try:
@@ -113,7 +112,7 @@ class TestCaseAutomaticGeneration:
     @staticmethod
     def allure_feature(case_data: Dict, file_path) -> Text:
         """
-        用于 allure 报告装饰器中的内容 @allure.feature("模块名称")
+        Content for allure report decorator @allure.feature("module name")
         :param file_path:
         :param case_data:
         :return:
@@ -129,7 +128,7 @@ class TestCaseAutomaticGeneration:
     @staticmethod
     def allure_story(case_data: Dict, file_path) -> Text:
         """
-        用于 allure 报告装饰器中的内容  @allure.story("测试功能")
+        Content for allure report decorator @allure.story("test feature")
         :param file_path:
         :param case_data:
         :return:
@@ -143,7 +142,7 @@ class TestCaseAutomaticGeneration:
             )) from exc
 
     def mk_dir(self, file_path: Text) -> None:
-        """ 判断生成自动化代码的文件夹路径是否存在，如果不存在，则自动创建 """
+        """ Check if the folder path for generated automation code exists; create it if not """
         # _LibDirPath = os.path.split(self.libPagePath(filePath))[0]
 
         _case_dir_path = os.path.split(self.get_case_path(file_path)[0])[0]
@@ -153,8 +152,8 @@ class TestCaseAutomaticGeneration:
     @staticmethod
     def case_ids(test_case):
         """
-        获取用例 ID
-        :param test_case: 测试用例内容
+        Get test case IDs
+        :param test_case: test case content
         :return:
         """
         ids = []
@@ -165,23 +164,23 @@ class TestCaseAutomaticGeneration:
 
     def yaml_path(self, file_path: Text) -> Text:
         """
-        生成动态 yaml 路径, 主要处理业务分层场景
-        :param file_path: 如业务有多个层级, 则获取到每一层/test_demo/DateDemo.py
+        Generate dynamic yaml path, mainly for handling multi-level business scenarios
+        :param file_path: if business has multiple levels, get each level /test_demo/DateDemo.py
         :return: Login/common.yaml
         """
         i = len(self.case_date_path())
-        # 兼容 linux 和 window 操作路径
+        # Compatible with linux and windows path handling
         yaml_path = file_path[i:].replace("\\", "/")
         return yaml_path
 
     def get_case_automatic(self) -> None:
-        """ 自动生成 测试代码"""
+        """ Automatically generate test code"""
         file_path = get_all_files(file_path=ensure_path_sep("\\data"), yaml_data_switch=True)
 
         for file in file_path:
-            # 判断代理拦截的yaml文件，不生成test_case代码
+            # Skip proxy intercepted yaml files, do not generate test_case code
             if 'proxy_data.yaml' not in file:
-                # 判断用例需要用的文件夹路径是否存在，不存在则创建
+                # Check if the required folder path exists; create it if not
                 self.mk_dir(file)
                 yaml_case_process = GetYamlData(file).get_yaml_data()
                 self.case_ids(yaml_case_process)

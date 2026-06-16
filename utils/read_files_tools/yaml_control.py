@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 """
 # @Time   : 2022/3/28 10:51
-# @Author : 余少琪
 """
 
 import os
@@ -12,34 +11,34 @@ from utils.read_files_tools.regular_control import regular
 
 
 class GetYamlData:
-    """ 获取 yaml 文件中的数据 """
+    """ Get data from yaml files """
 
     def __init__(self, file_dir):
         self.file_dir = str(file_dir)
 
     def get_yaml_data(self) -> dict:
         """
-        获取 yaml 中的数据
+        Get data from yaml
         :param: fileDir:
         :return:
         """
-        # 判断文件是否存在
+        # Check if the file exists
         if os.path.exists(self.file_dir):
             data = open(self.file_dir, 'r', encoding='utf-8')
             res = yaml.load(data, Loader=yaml.FullLoader)
         else:
-            raise FileNotFoundError("文件路径不存在")
+            raise FileNotFoundError("File path does not exist")
         return res
 
     def write_yaml_data(self, key: str, value) -> int:
         """
-        更改 yaml 文件中的值, 并且保留注释内容
-        :param key: 字典的key
-        :param value: 写入的值
+        Modify the value in a yaml file while preserving comments
+        :param key: dictionary key
+        :param value: value to write
         :return:
         """
         with open(self.file_dir, 'r', encoding='utf-8') as file:
-            # 创建了一个空列表，里面没有元素
+            # Create an empty list with no elements
             lines = []
             for line in file.readlines():
                 if line != '\n':
@@ -62,11 +61,11 @@ class GetYamlData:
 
 
 class GetCaseData(GetYamlData):
-    """ 获取测试用例中的数据 """
+    """ Get data from test cases """
 
     def get_different_formats_yaml_data(self) -> list:
         """
-        获取兼容不同格式的yaml数据
+        Get yaml data compatible with different formats
         :return:
         """
         res_list = []
@@ -76,11 +75,11 @@ class GetCaseData(GetYamlData):
 
     def get_yaml_case_data(self):
         """
-        获取测试用例数据, 转换成指定数据格式
+        Get test case data and convert to the specified data format
         :return:
         """
 
         _yaml_data = self.get_yaml_data()
-        # 正则处理yaml文件中的数据
+        # Process data in yaml file with regex
         re_data = regular(str(_yaml_data))
         return ast.literal_eval(re_data)

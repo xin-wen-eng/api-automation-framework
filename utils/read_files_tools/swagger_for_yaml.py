@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 """
 # @Time   : 2022/8/11 10:51
-# @Author : 余少琪
 """
 import json
 from jsonpath import jsonpath
@@ -19,7 +18,7 @@ class SwaggerForYaml:
     @classmethod
     def get_swagger_json(cls):
         """
-        获取 swagger 中的 json 数据
+        Get the json data from swagger
         :return:
         """
         try:
@@ -27,39 +26,39 @@ class SwaggerForYaml:
                 row_data = json.load(f)
                 return row_data
         except FileNotFoundError:
-            raise FileNotFoundError("文件路径不存在，请重新输入")
+            raise FileNotFoundError("File path does not exist, please re-enter")
 
     def get_allure_epic(self):
-        """ 获取 yaml 用例中的 allure_epic """
+        """ Get allure_epic from the yaml test case """
         _allure_epic = self._data['info']['title']
         return _allure_epic
 
     @classmethod
     def get_allure_feature(cls, value):
-        """ 获取 yaml 用例中的 allure_feature """
+        """ Get allure_feature from the yaml test case """
         _allure_feature = value['tags']
         return str(_allure_feature)
 
     @classmethod
     def get_allure_story(cls, value):
-        """ 获取 yaml 用例中的 allure_story """
+        """ Get allure_story from the yaml test case """
         _allure_story = value['summary']
         return _allure_story
 
     @classmethod
     def get_case_id(cls, value):
-        """ 获取 case_id """
+        """ Get case_id """
         _case_id = value.replace("/", "_")
         return "01" + _case_id
 
     @classmethod
     def get_detail(cls, value):
         _get_detail = value['summary']
-        return "测试" + _get_detail
+        return "Test " + _get_detail
 
     @classmethod
     def get_request_type(cls, value, headers):
-        """ 处理 request_type """
+        """ Handle request_type """
         if jsonpath(obj=value, expr="$.parameters") is not False:
             _parameters = value['parameters']
             if _parameters[0]['in'] == 'query':
@@ -76,7 +75,7 @@ class SwaggerForYaml:
 
     @classmethod
     def get_case_data(cls, value):
-        """ 处理 data 数据 """
+        """ Handle data """
         _dict = {}
         if jsonpath(obj=value, expr="$.parameters") is not False:
             _parameters = value['parameters']
@@ -92,9 +91,9 @@ class SwaggerForYaml:
     @classmethod
     def yaml_cases(cls, data: Dict, file_path: str) -> None:
         """
-        写入 yaml 数据
+        Write yaml data
         :param file_path:
-        :param data: 测试用例数据
+        :param data: test case data
         :return:
         """
 
@@ -113,7 +112,7 @@ class SwaggerForYaml:
 
     @classmethod
     def get_headers(cls, value):
-        """ 获取请求头 """
+        """ Get request headers """
         _headers = {}
         if jsonpath(obj=value, expr="$.consumes") is not False:
             _headers = {"Content-Type": value['consumes'][0]}

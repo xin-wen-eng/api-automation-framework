@@ -2,14 +2,13 @@
 # -*- coding: utf-8 -*-
 """
 # @Time   : 2022/4/7 11:56
-# @Author : 余少琪
 """
 
 import os
 
 
 def del_file(path):
-    """删除目录下的文件"""
+    """Delete files in the directory"""
     list_path = os.listdir(path)
     for i in list_path:
         c_path = os.path.join(path, i)

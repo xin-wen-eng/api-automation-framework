@@ -17,11 +17,11 @@ TestData = GetTestCase.case_data(case_id)
 re_data = regular(str(TestData))
 
 
-@allure.epic("开发平台接口")
-@allure.feature("登录模块")
+@allure.epic("Development Platform Interface")
+@allure.feature("Login Module")
 class TestLogin:
 
-    @allure.story("登录")
+    @allure.story("Login")
     @pytest.mark.parametrize('in_data', eval(re_data), ids=[i['detail'] for i in TestData])
     def test_login(self, in_data, case_skip):
         """

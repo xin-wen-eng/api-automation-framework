@@ -17,11 +17,11 @@ TestData = GetTestCase.case_data(case_id)
 re_data = regular(str(TestData))
 
 
-@allure.epic("开发平台接口")
-@allure.feature("收藏模块")
+@allure.epic("Developer Platform API")
+@allure.feature("Favorites Module")
 class TestCollectDeleteTool:
 
-    @allure.story("删除收藏网站接口")
+    @allure.story("Delete Favorite Website API")
     @pytest.mark.parametrize('in_data', eval(re_data), ids=[i['detail'] for i in TestData])
     def test_collect_delete_tool(self, in_data, case_skip):
         """

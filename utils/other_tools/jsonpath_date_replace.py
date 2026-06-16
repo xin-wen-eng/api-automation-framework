@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 """
 # @Time    : 2022/5/23 18:27
-# @Author  : 余少琪
 # @Email   : 1603453211@qq.com
 # @File    : jsonpath_date_replace
 # @describe:
@@ -10,7 +9,7 @@
 
 
 def jsonpath_replace(change_data, key_name, data_switch=None):
-    """处理jsonpath数据"""
+    """Handle jsonpath data"""
     _new_data = key_name + ''
     for i in change_data:
         if i == '$':

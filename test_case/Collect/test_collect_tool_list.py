@@ -17,11 +17,11 @@ TestData = GetTestCase.case_data(case_id)
 re_data = regular(str(TestData))
 
 
-@allure.epic("开发平台接口")
-@allure.feature("收藏模块")
+@allure.epic("Developer Platform API")
+@allure.feature("Favorites Module")
 class TestCollectToolList:
 
-    @allure.story("收藏网址列表接口")
+    @allure.story("Favorites URL List API")
     @pytest.mark.parametrize('in_data', eval(re_data), ids=[i['detail'] for i in TestData])
     def test_collect_tool_list(self, in_data, case_skip):
         """

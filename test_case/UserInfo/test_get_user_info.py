@@ -17,11 +17,11 @@ TestData = GetTestCase.case_data(case_id)
 re_data = regular(str(TestData))
 
 
-@allure.epic("开发平台接口")
-@allure.feature("个人信息模块")
+@allure.epic("Developer Platform API")
+@allure.feature("Personal Information Module")
 class TestGetUserInfo:
 
-    @allure.story("个人信息接口")
+    @allure.story("Personal Information API")
     @pytest.mark.parametrize('in_data', eval(re_data), ids=[i['detail'] for i in TestData])
     def test_get_user_info(self, in_data, case_skip):
         """

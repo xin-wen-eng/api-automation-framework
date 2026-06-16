@@ -1,26 +1,26 @@
-# 公共参数
+# Common parameters
 case_common:
-  allureEpic: 开发平台接口
-  allureFeature: 收藏模块
-  allureStory: 收藏网址列表接口
+  allureEpic: Development Platform Interface
+  allureFeature: Collect Module
+  allureStory: Collect URL List Interface
 
 collect_tool_list_01:
     host: ${{host()}}
     url: /lg/collect/usertools/json
     method: GET
-    detail: 查看收藏网址列表接口
+    detail: View collect URL list interface
     headers:
       Content-Type: multipart/form-data;
-      # 这里cookie的值，写的是存入缓存的名称
+      # The cookie value here is the name stored in cache
       cookie: $cache{login_cookie}
-    # 请求的数据，是 params 还是 json、或者file、data
+    # Request data type: params, json, file, or data
     requestType: None
-    # 是否执行，空或者 true 都会执行
+    # Whether to execute; empty or true will both execute
     is_run:
     data:
-    # 是否有依赖业务，为空或者false则表示没有
+    # Whether there are dependent business cases; empty or false means no dependency
     dependence_case: True
-        # 依赖的数据
+        # Dependent data
     dependence_case_data:
       - case_id: self
         dependent_data:
@@ -29,7 +29,7 @@ collect_tool_list_01:
             set_cache: yushaoqi
 
     assert:
-      # 断言接口状态码
+      # Assert interface status code
       errorCode:
         jsonpath: $.errorCode
         type: ==
@@ -40,4 +40,3 @@ collect_tool_list_01:
     setup_sql:
       - SELECT * FROM `api_test`.`t_open_field_cfg_copy1` LIMIT 0,1;
     sleep: 2
-

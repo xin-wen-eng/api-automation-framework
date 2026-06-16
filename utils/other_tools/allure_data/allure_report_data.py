@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 # @Time   : 2022/3/28 15:44
-# @Author : 余少琪
-描述: 收集 allure 报告
+Description: Collect allure reports
 """
 
 import json
@@ -14,12 +13,12 @@ from utils.other_tools.models import TestMetrics
 
 
 class AllureFileClean:
-    """allure 报告数据清洗，提取业务需要得数据"""
+    """allure report data cleaning, extracting data required by the business"""
 
     @classmethod
     def get_testcases(cls) -> List:
-        """ 获取所有 allure 报告中执行用例的情况"""
-        # 将所有数据都收集到files中
+        """ Get the execution status of all test cases in allure reports"""
+        # Collect all data into files
         files = []
         for i in get_all_files(ensure_path_sep("\\report\\html\\data\\test-cases")):
             with open(i, 'r', encoding='utf-8') as file:
@@ -28,7 +27,7 @@ class AllureFileClean:
         return files
 
     def get_failed_case(self) -> List:
-        """ 获取到所有失败的用例标题和用例代码路径"""
+        """ Get the titles and code paths of all failed test cases"""
         error_case = []
         for i in self.get_testcases():
             if i['status'] == 'failed' or i['status'] == 'broken':
@@ -36,12 +35,12 @@ class AllureFileClean:
         return error_case
 
     def get_failed_cases_detail(self) -> Text:
-        """ 返回所有失败的测试用例相关内容 """
+        """ Return all relevant content for failed test cases """
         date = self.get_failed_case()
         values = ""
-        # 判断有失败用例，则返回内容
+        # If there are failed test cases, return the content
         if len(date) >= 1:
-            values = "失败用例:\n"
+            values = "Failed cases:\n"
             values += "        **********************************\n"
             for i in date:
                 values += "        " + i[0] + ":" + i[1] + "\n"
@@ -49,7 +48,7 @@ class AllureFileClean:
 
     @classmethod
     def get_case_count(cls) -> "TestMetrics":
-        """ 统计用例数量 """
+        """ Count the number of test cases """
         try:
             file_name = ensure_path_sep("\\report\\html\\widgets\\summary.json")
             with open(file_name, 'r', encoding='utf-8') as file:
@@ -58,23 +57,23 @@ class AllureFileClean:
             _time = data['time']
             keep_keys = {"passed", "failed", "broken", "skipped", "total"}
             run_case_data = {k: v for k, v in data['statistic'].items() if k in keep_keys}
-            # 判断运行用例总数大于0
+            # Check if total number of test cases run is greater than 0
             if _case_count["total"] > 0:
-                # 计算用例成功率
+                # Calculate the test case pass rate
                 run_case_data["pass_rate"] = round(
                     (_case_count["passed"] + _case_count["skipped"]) / _case_count["total"] * 100, 2
                 )
             else:
-                # 如果未运行用例，则成功率为 0.0
+                # If no test cases were run, the pass rate is 0.0
                 run_case_data["pass_rate"] = 0.0
-            # 收集用例运行时长
+            # Collect the test case run duration
             run_case_data['time'] = _time if run_case_data['total'] == 0 else round(_time['duration'] / 1000, 2)
             return TestMetrics(**run_case_data)
         except FileNotFoundError as exc:
             raise FileNotFoundError(
-                "程序中检查到您未生成allure报告，"
-                "通常可能导致的原因是allure环境未配置正确，"
-                "详情可查看如下博客内容："
+                "The program detected that you have not generated an allure report. "
+                "This is usually caused by an incorrect allure environment configuration. "
+                "For details, please refer to the following blog post: "
                 "https://blog.csdn.net/weixin_43865008/article/details/124332793"
             ) from exc
 

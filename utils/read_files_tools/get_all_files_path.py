@@ -2,20 +2,19 @@
 # -*- coding: utf-8 -*-
 """
 # @Time   : 2022/3/28 13:22
-# @Author : 余少琪
 """
 import os
 
 
 def get_all_files(file_path, yaml_data_switch=False) -> list:
     """
-    获取文件路径
-    :param file_path: 目录路径
-    :param yaml_data_switch: 是否过滤文件为 yaml格式， True则过滤
+    Get file paths
+    :param file_path: directory path
+    :param yaml_data_switch: whether to filter files to yaml format, True means filter
     :return:
     """
     filename = []
-    # 获取所有文件下的子文件名称
+    # Get all sub-file names under all files
     for root, dirs, files in os.walk(file_path):
         for _file_path in files:
             path = os.path.join(root, _file_path)

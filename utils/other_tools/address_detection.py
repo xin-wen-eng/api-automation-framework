@@ -1,9 +1,6 @@
 # coding=utf-8
 """
     @project: pytest-auto-api2
-    @Author：七月
-    @file： address_detection.py
-    @date：2022/11/9 11:42
     @blogs: https://blog.csdn.net/weixin_43865008
 """
 from utils.mysql_tool.mysql_control import MysqlDB
@@ -14,7 +11,7 @@ class AddressDetection(MysqlDB):
 
     def get_shop_address_entity_str(self):
         """
-        获取所有已经上线并且未删除的店铺地址(去除自定店铺，自营店铺没有地址)
+        Get all shop addresses that are online and not deleted (excluding self-operated shops, which have no addresses)
         :return:
         """
         shop_info = self.query("SELECT id, name, attribute, shop_type, sub_shop_type "
@@ -25,7 +22,7 @@ class AddressDetection(MysqlDB):
 
     def get_logistics_address_library(self):
         """
-        获取平台地址库中的省份code
+        Get the province codes from the platform address library
         :return:
         """
 
@@ -39,14 +36,14 @@ class AddressDetection(MysqlDB):
 
     def get_error_shop(self):
         """
-        获取错误的店铺数据
+        Get shop data with errors
         :return:
         """
-        # 获取区域code
+        # Get area code
         get_logistics_address_library = self.get_logistics_address_library()
         num = 0
         for i in self.get_shop_address_entity_str():
-            # 获取店铺地址
+            # Get shop address
             shop_address_entity_str = eval(i['attribute'])['shopAddressEntityStr']
 
             if shop_address_entity_str['countiesName'] == get_logistics_address_library[str(shop_address_entity_str['countiesCode'])]:
@@ -59,11 +56,11 @@ class AddressDetection(MysqlDB):
                 new_shop_address_entity_str = copy.deepcopy(shop_address_entity_str)
                 new_shop_address_entity_str['countiesCode'] = area_name[0]['code']
                 # print(str(f'update obp_supplier.supplier_shop set attribute = json_set(attribute,"$.shopAddressEntityStr.countiesCode",{area_name[0]["code"]}) where id = {i["id"]};'))
-                print(f"店铺名称: {i['name']}, 店铺id: {i['id']}, "
-                      f"店铺地址：{shop_address_entity_str['cityName']}{shop_address_entity_str['provinceName']}{shop_address_entity_str['countiesName']}"
-                      f"\n当前实际数据:{shop_address_entity_str}"
-                      f"\n{shop_address_entity_str['countiesName']}的实际code码为 {area_name}"
-                      f"\n更改后的数据： {new_shop_address_entity_str}")
+                print(f"Shop name: {i['name']}, Shop id: {i['id']}, "
+                      f"Shop address: {shop_address_entity_str['cityName']}{shop_address_entity_str['provinceName']}{shop_address_entity_str['countiesName']}"
+                      f"\nCurrent actual data: {shop_address_entity_str}"
+                      f"\nActual code for {shop_address_entity_str['countiesName']} is {area_name}"
+                      f"\nUpdated data: {new_shop_address_entity_str}")
                 print("*" * 100)
 
 

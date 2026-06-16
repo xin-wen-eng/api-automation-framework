@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 """
 # @Time   : 2022/3/28 12:52
-# @Author : 余少琪
 """
 import ast
 import os
@@ -29,7 +28,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
 class RequestControl:
-    """ 封装请求 """
+    """ Encapsulate requests """
 
     def __init__(self, yaml_case):
         self.__yaml_case = TestCase(**yaml_case)
@@ -37,8 +36,8 @@ class RequestControl:
     def file_data_exit(
             self,
             file_data) -> None:
-        """判断上传文件时，data参数是否存在"""
-        # 兼容又要上传文件，又要上传其他类型参数
+        """Check whether the data parameter exists when uploading a file"""
+        # Compatible with uploading both files and other types of parameters
         try:
             _data = self.__yaml_case.data
             for key, value in ast.literal_eval(cache_regular(str(_data)))['data'].items():
@@ -50,9 +49,9 @@ class RequestControl:
     def multipart_data(
             cls,
             file_data: Dict):
-        """ 处理上传文件数据 """
+        """ Handle upload file data """
         multipart = MultipartEncoder(
-            fields=file_data,  # 字典格式
+            fields=file_data,  # dictionary format
             boundary='-----------------------------' + str(random.randint(int(1e28), int(1e29 - 1)))
         )
         return multipart
@@ -62,7 +61,7 @@ class RequestControl:
             cls,
             headers: Dict) -> Dict:
         """
-        兼容用户未填写headers或者header值为int
+        Compatible with users not filling in headers or header values being int
         @return:
         """
         headers = ast.literal_eval(cache_regular(str(headers)))
@@ -79,21 +78,21 @@ class RequestControl:
             cls,
             request_data: Dict,
             header: Dict):
-        """ 判断处理header为 Content-Type: multipart/form-data"""
+        """ Check and handle header as Content-Type: multipart/form-data"""
         header = ast.literal_eval(cache_regular(str(header)))
         request_data = ast.literal_eval(cache_regular(str(request_data)))
 
         if header is None:
             header = {"headers": None}
         else:
-            # 将header中的int转换成str
+            # Convert int values in header to str
             for key, value in header.items():
                 if not isinstance(value, str):
                     header[key] = str(value)
             if "multipart/form-data" in str(header.values()):
-                # 判断请求参数不为空, 并且参数是字典类型
+                # Check that request parameters are not empty and are of dict type
                 if request_data and isinstance(request_data, dict):
-                    # 当 Content-Type 为 "multipart/form-data"时，需要将数据类型转换成 str
+                    # When Content-Type is "multipart/form-data", convert data types to str
                     for key, value in request_data.items():
                         if not isinstance(value, str):
                             request_data[key] = str(value)
@@ -104,7 +103,7 @@ class RequestControl:
         return request_data, header
 
     def file_prams_exit(self) -> Dict:
-        """判断上传文件接口，文件参数是否存在"""
+        """Check whether file parameters exist for file upload interface"""
         try:
             params = self.__yaml_case.data['params']
         except KeyError:
@@ -115,14 +114,14 @@ class RequestControl:
     def text_encode(
             cls,
             text: Text) -> Text:
-        """unicode 解码"""
+        """unicode decode"""
         return text.encode("utf-8").decode("utf-8")
 
     @classmethod
     def response_elapsed_total_seconds(
             cls,
             res) -> float:
-        """获取接口响应时长"""
+        """Get interface response duration"""
         try:
             return round(res.elapsed.total_seconds() * 1000, 2)
         except AttributeError:
@@ -131,20 +130,20 @@ class RequestControl:
     def upload_file(
             self) -> Tuple:
         """
-        判断处理上传文件
+        Handle file upload
         :return:
         """
-        # 处理上传多个文件的情况
+        # Handle uploading multiple files
         _files = []
         file_data = {}
-        # 兼容又要上传文件，又要上传其他类型参数
+        # Compatible with uploading both files and other types of parameters
         self.file_data_exit(file_data)
         _data = self.__yaml_case.data
         for key, value in ast.literal_eval(cache_regular(str(_data)))['file'].items():
             file_path = ensure_path_sep("\\Files\\" + value)
             file_data[key] = (value, open(file_path, 'rb'), 'application/octet-stream')
             _files.append(file_data)
-            # allure中展示该附件
+            # Display this attachment in allure
             allure_attach(source=file_path, name=value, extension=value)
         multipart = self.multipart_data(file_data)
         # ast.literal_eval(cache_regular(str(_headers)))['Content-Type'] = multipart.content_type
@@ -157,7 +156,7 @@ class RequestControl:
             headers: Dict,
             method: Text,
             **kwargs):
-        """ 判断请求类型为json格式 """
+        """ Check request type is json format """
         _headers = self.check_headers_str_null(headers)
         _data = self.__yaml_case.data
         _url = self.__yaml_case.url
@@ -178,7 +177,7 @@ class RequestControl:
             headers: Dict,
             method: Text,
             **kwargs) -> object:
-        """判断 requestType 为 None"""
+        """Check requestType is None"""
         _headers = self.check_headers_str_null(headers)
         _url = self.__yaml_case.url
         res = requests.request(
@@ -198,11 +197,11 @@ class RequestControl:
             method: Text,
             **kwargs):
 
-        """处理 requestType 为 params """
+        """Handle requestType as params """
         _data = self.__yaml_case.data
         url = self.__yaml_case.url
         if _data is not None:
-            # url 拼接的方式传参
+            # Pass parameters by URL concatenation
             params_data = "?"
             for key, value in _data.items():
                 if value is None or value == '':
@@ -226,7 +225,7 @@ class RequestControl:
             method: Text,
             headers,
             **kwargs):
-        """处理 requestType 为 file 类型"""
+        """Handle requestType as file type"""
         multipart = self.upload_file()
         yaml_data = multipart[2]
         _headers = multipart[2].headers
@@ -247,7 +246,7 @@ class RequestControl:
             headers: Dict,
             method: Text,
             **kwargs):
-        """判断 requestType 为 data 类型"""
+        """Check requestType is data type"""
         data = self.__yaml_case.data
         _data, _headers = self.multipart_in_headers(
             ast.literal_eval(cache_regular(str(data))),
@@ -266,10 +265,10 @@ class RequestControl:
 
     @classmethod
     def get_export_api_filename(cls, res):
-        """ 处理导出文件 """
+        """ Handle export file """
         content_disposition = res.headers.get('content-disposition')
-        filename_code = content_disposition.split("=")[-1]  # 分隔字符串，提取文件名
-        filename = urllib.parse.unquote(filename_code)  # url解码
+        filename_code = content_disposition.split("=")[-1]  # split string, extract filename
+        filename = urllib.parse.unquote(filename_code)  # url decode
         return filename
 
     def request_type_for_export(
@@ -277,7 +276,7 @@ class RequestControl:
             headers: Dict,
             method: Text,
             **kwargs):
-        """判断 requestType 为 export 导出类型"""
+        """Check requestType is export type"""
         _headers = self.check_headers_str_null(headers)
         _data = self.__yaml_case.data
         _url = self.__yaml_case.url
@@ -290,21 +289,21 @@ class RequestControl:
             stream=False,
             data={},
             **kwargs)
-        filepath = os.path.join(ensure_path_sep("\\Files\\"), self.get_export_api_filename(res))  # 拼接路径
+        filepath = os.path.join(ensure_path_sep("\\Files\\"), self.get_export_api_filename(res))  # concatenate path
         if res.status_code == 200:
-            if res.text:  # 判断文件内容是否为空
+            if res.text:  # check if file content is empty
                 with open(filepath, 'wb') as file:
-                    # iter_content循环读取信息写入，chunk_size设置文件大小
+                    # iter_content loops reading and writing, chunk_size sets file size
                     for chunk in res.iter_content(chunk_size=1):
                         file.write(chunk)
             else:
-                print("文件为空")
+                print("File is empty")
 
         return res
 
     @classmethod
     def _request_body_handler(cls, data: Dict, request_type: Text) -> Union[None, Dict]:
-        """处理请求参数 """
+        """Handle request parameters """
         if request_type.upper() == 'PARAMS':
             return None
         else:
@@ -312,8 +311,8 @@ class RequestControl:
 
     @classmethod
     def _sql_data_handler(cls, sql_data, res):
-        """处理 sql 参数 """
-        # 判断数据库开关，开启状态，则返回对应的数据
+        """Handle sql parameters """
+        # Check database switch; if enabled, return the corresponding data
         if config.mysql_db.switch and sql_data is not None:
             sql_data = AssertExecution().assert_execution(
                 sql=sql_data,
@@ -335,7 +334,7 @@ class RequestControl:
             "is_run": yaml_data.is_run,
             "detail": yaml_data.detail,
             "response_data": res.text,
-            # 这个用于日志专用，判断如果是get请求，直接打印url
+            # Used for logging only; if it's a GET request, print the URL directly
             "request_body": self._request_body_handler(
                 data, yaml_data.requestType
             ),
@@ -351,7 +350,7 @@ class RequestControl:
             "teardown_sql": yaml_data.teardown_sql,
             "body": data
         }
-        # 抽离出通用模块，判断 http_request 方法中的一些数据校验
+        # Extract common module, validate some data in the http_request method
         return ResponseData(**_data)
 
     @classmethod
@@ -366,15 +365,15 @@ class RequestControl:
             res_time: Text,
             res: Text
     ) -> None:
-        """ 在allure中记录请求数据 """
-        allure_step_no(f"请求URL: {url}")
-        allure_step_no(f"请求方式: {method}")
-        allure_step("请求头: ", headers)
-        allure_step("请求数据: ", data)
-        allure_step("预期数据: ", assert_data)
+        """ Record request data in allure """
+        allure_step_no(f"Request URL: {url}")
+        allure_step_no(f"Request Method: {method}")
+        allure_step("Request Headers: ", headers)
+        allure_step("Request Data: ", data)
+        allure_step("Expected Data: ", assert_data)
         _res_time = res_time
-        allure_step_no(f"响应耗时(ms): {str(_res_time)}")
-        allure_step("响应结果: ", res)
+        allure_step_no(f"Response Time (ms): {str(_res_time)}")
+        allure_step("Response Result: ", res)
 
     @log_decorator(True)
     @execution_duration(3000)
@@ -385,7 +384,7 @@ class RequestControl:
             **kwargs
     ):
         """
-        请求封装
+        Request encapsulation
         :param dependent_switch:
         :param kwargs:
         :return:
@@ -401,9 +400,9 @@ class RequestControl:
         }
 
         is_run = ast.literal_eval(cache_regular(str(self.__yaml_case.is_run)))
-        # 判断用例是否执行
+        # Check whether the test case should be executed
         if is_run is True or is_run is None:
-            # 处理多业务逻辑
+            # Handle multiple business logic
             if dependent_switch is True:
                 DependentCase(self.__yaml_case).get_dependent_data()
 
@@ -429,7 +428,7 @@ class RequestControl:
                 res_time=str(_res_data.res_time),
                 res=_res_data.response_data
             )
-            # 将当前请求数据存入缓存中
+            # Store the current request data in cache
             SetCurrentRequestCache(
                 current_request_set_cache=self.__yaml_case.current_request_set_cache,
                 request_data=self.__yaml_case.data,
@@ -437,4 +436,3 @@ class RequestControl:
             ).set_caches_main()
 
             return _res_data
-

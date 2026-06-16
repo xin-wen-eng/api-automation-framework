@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 
 
 class NotificationType(Enum):
-    """ 自动化通知方式 """
+    """ Automation notification method """
     DEFAULT = 0
     DING_TALK = 1
     WECHAT = 2
@@ -16,7 +16,7 @@ class NotificationType(Enum):
 
 @dataclass
 class TestMetrics:
-    """ 用例执行数据 """
+    """ Test case execution data """
     passed: int
     failed: int
     broken: int
@@ -28,7 +28,7 @@ class TestMetrics:
 
 class RequestType(Enum):
     """
-    request请求发送，请求参数的数据类型
+    Request sending, data type of request parameters
     """
     JSON = "JSON"
     PARAMS = "PARAMS"
@@ -39,7 +39,7 @@ class RequestType(Enum):
 
 
 def load_module_functions(module) -> Dict[Text, Callable]:
-    """ 获取 module中方法的名称和所在的内存地址 """
+    """ Get the names and memory addresses of methods in a module """
     module_functions = {}
 
     for name, item in vars(module).items():
@@ -51,7 +51,7 @@ def load_module_functions(module) -> Dict[Text, Callable]:
 @unique
 class DependentType(Enum):
     """
-    数据依赖相关枚举
+    Data dependency related enumerations
     """
     RESPONSE = 'response'
     REQUEST = 'request'
@@ -166,7 +166,7 @@ class Email(BaseModel):
     send_user: Union[Text, None]
     email_host: Union[Text, None]
     stamp_key: Union[Text, None]
-    # 收件人
+    # Recipient
     send_list: Union[Text, None]
 
 
@@ -190,7 +190,7 @@ class Config(BaseModel):
 @unique
 class AllureAttachmentType(Enum):
     """
-    allure 报告的文件类型枚举
+    Allure report file type enumerations
     """
     TEXT = "txt"
     CSV = "csv"
@@ -219,7 +219,7 @@ class AllureAttachmentType(Enum):
 
 @unique
 class AssertMethod(Enum):
-    """断言类型"""
+    """Assertion types"""
     equals = "=="
     less_than = "lt"
     less_than_or_equals = "le"

@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 """
 # @Time   : 2022/3/28 15:46
-# @Author : 余少琪
 """
 from urllib.parse import parse_qs, urlparse
 from typing import Any, Union, Text, List, Dict, Tuple
@@ -15,31 +14,32 @@ from ruamel import yaml
 
 class Counter:
     """
-    代理录制，基于 mitmproxy 库拦截获取网络请求
-    将接口请求数据转换成 yaml 测试用例
-    参考资料: https://blog.wolfogre.com/posts/usage-of-mitmproxy/
+    Proxy recording, intercepts and captures network requests based on the mitmproxy library.
+    Converts API request data into yaml test cases.
+    Reference: https://blog.wolfogre.com/posts/usage-of-mitmproxy/
     """
 
     def __init__(self, filter_url: List, filename: Text = './data/proxy_data.yaml'):
         self.num = 0
         self.file = filename
         self.counter = 1
-        # 需要过滤的 url
+        # URLs to be filtered
         self.url = filter_url
 
     def response(self, flow: mitmproxy.http.HTTPFlow) -> None:
         """
-        mitmproxy抓包处理响应，在这里汇总需要数据, 过滤 包含指定url，并且响应格式是 json的
+        mitmproxy packet capture processes responses, aggregates required data here,
+        filters URLs containing the specified url and whose response format is json.
         :param flow:
         :return:
         """
-        # 存放需要过滤的接口
+        # Store the interface types to be filtered out
         filter_url_type = ['.css', '.js', '.map', '.ico', '.png', '.woff', '.map3', '.jpeg', '.jpg']
         url = flow.request.url
         ctx.log.info("=" * 100)
-        # 判断过滤掉含 filter_url_type 中后缀的 url
+        # Filter out URLs with suffixes in filter_url_type
         if any(i in url for i in filter_url_type) is False:
-            # 存放测试用例
+            # Store test cases
             if self.filter_url(url):
 
                 data = self.data_handle(flow.request.text)
@@ -63,7 +63,7 @@ class Counter:
                         "sql": None
                     }
                 }
-                # 判断如果请求参数时拼接在url中，提取url中参数，转换成字典
+                # If request parameters are appended to the URL, extract URL parameters and convert to dict
                 if "?" in url:
                     cases[case_id]['url'] = self.get_url_handler(url)[1]
                     cases[case_id]['data'] = self.get_url_handler(url)[0]
@@ -71,7 +71,7 @@ class Counter:
                 ctx.log.info("=" * 100)
                 ctx.log.info(cases)
 
-                # 判断文件不存在则创建文件
+                # If the file does not exist, create it
                 try:
                     self.yaml_cases(cases)
                 except FileNotFoundError:
@@ -81,29 +81,30 @@ class Counter:
     @classmethod
     def get_case_id(cls, url: Text) -> Text:
         """
-        通过url，提取对应的user_id
+        Extract the corresponding user_id via url.
         :param url:
         :return:
         """
         _url_path = str(url).split('?')[0]
-        # 通过url中的接口地址，最后一个参数，作为case_id的名称
+        # Use the last segment of the interface path in the URL as the case_id name
         _url = _url_path.split('/')
         return _url[-1]
 
     def filter_url(self, url: Text) -> bool:
-        """过滤url"""
+        """Filter URL"""
         for i in self.url:
-            # 判断当前拦截的url地址，是否是addons中配置的host
+            # Check whether the currently intercepted URL is a host configured in addons
             if i in url:
-                # 如果是，则返回True
+                # If yes, return True
                 return True
-        # 否则返回 False
+        # Otherwise return False
         return False
 
     @classmethod
     def response_code_handler(cls, response) -> Union[Dict, None]:
         """
-        处理接口响应，默认断言数据为code码，如果接口没有code码，则返回None
+        Process the API response; the default assertion data is the code field.
+        If the API has no code field, return None.
         @param response:
         @return:
         """
@@ -118,15 +119,15 @@ class Counter:
 
     @classmethod
     def request_type_handler(cls, method: Text) -> Text:
-        """ 处理请求类型，有params、json、file,需要根据公司的业务情况自己调整 """
+        """ Handle request type: params, json, file - adjust according to your company's business logic """
         if method == 'GET':
-            # 如我们公司只有get请求是prams，其他都是json的
+            # For example, in our company only GET requests use params; all others use json
             return 'params'
         return 'json'
 
     @classmethod
     def data_handle(cls, dict_str) -> Any:
-        """处理接口请求、响应的数据，如null、true格式问题"""
+        """Handle API request/response data, fixing issues with null, true format"""
         try:
             if dict_str != "":
                 if 'null' in dict_str:
@@ -145,12 +146,12 @@ class Counter:
     @classmethod
     def token_handle(cls, header) -> Dict:
         """
-        提取请求头参数
+        Extract request header parameters.
         :param header:
         :return:
         """
-        # 这里是将所有请求头的数据，全部都拦截出来了
-        # 如果公司只需要部分参数，可以在这里加判断过滤
+        # Here all request header data is intercepted in full.
+        # If only certain parameters are needed, add filtering logic here.
         headers = {}
         for key, value in header.items():
             headers[key] = value
@@ -158,15 +159,16 @@ class Counter:
 
     def host_handle(self, url: Text) -> Tuple:
         """
-        解析 url
+        Parse the URL.
         :param url: https://xxxx.test.xxxx.com/#/goods/listShop
         :return: https://xxxx.test.xxxx.com/
         """
         host = None
-        # 循环遍历需要过滤的hosts数据
+        # Iterate over the hosts that need to be filtered
         for i in self.url:
-            # 这里主要是判断，如果我们conf.py中有配置这个域名，则用例中展示 ”${{host}}“，动态获取用例host
-            # 大家可以在这里改成自己公司的host地址
+            # This checks whether the domain configured in conf.py matches;
+            # if so, the test case displays "${{host}}" to dynamically obtain the host.
+            # Replace with your own company's host address here.
             if 'https://www.wanandroid.com' in url:
                 host = '${{host}}'
             elif i in url:
@@ -175,12 +177,12 @@ class Counter:
 
     def url_path_handle(self, url: Text):
         """
-        解析 url_path
+        Parse the url_path.
         :param url: https://xxxx.test.xxxx.com/shopList/json
         :return: /shopList/json
         """
         url_path = None
-        # 循环需要拦截的域名
+        # Iterate over the domains to be intercepted
         for path in self.url:
             if path in url:
                 url_path = url.split(path)[-1]
@@ -188,8 +190,8 @@ class Counter:
 
     def yaml_cases(self, data: Dict) -> None:
         """
-        写入 yaml 数据
-        :param data: 测试用例数据
+        Write yaml data.
+        :param data: test case data
         :return:
         """
         with open(self.file, "a", encoding="utf-8") as file:
@@ -198,26 +200,26 @@ class Counter:
 
     def get_url_handler(self, url: Text) -> Tuple:
         """
-        将 url 中的参数 转换成字典
+        Convert URL parameters into a dictionary.
         :param url: /trade?tradeNo=&outTradeId=11
-        :return: {“outTradeId”: 11}
+        :return: {"outTradeId": 11}
         """
         result = None
         url_path = None
         for i in self.url:
             if i in url:
                 query = urlparse(url).query
-                # 将字符串转换为字典
+                # Convert the string to a dictionary
                 params = parse_qs(query)
-                # 所得的字典的value都是以列表的形式存在，如请求url中的参数值为空，则字典中不会有该参数
+                # The values in the resulting dict are all lists; if a parameter value in the URL is empty, it will not appear in the dict
                 result = {key: params[key][0] for key in params}
                 url = url[0:url.rfind('?')]
                 url_path = url.split(i)[-1]
         return result, url_path
 
 
-# 1、本机需要设置代理，默认端口为: 8080
-# 2、控制台输入 mitmweb -s .\utils\recording\mitmproxy_control.py - p 8888命令开启代理模式进行录制
+# 1. The local machine must have a proxy configured; the default port is: 8080
+# 2. In the console, enter: mitmweb -s .\utils\recording\mitmproxy_control.py -p 8888 to start proxy recording mode
 
 
 addons = [

@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # @Time   : 2022/3/28 10:56
-# @Author : 余少琪
 """
-日志封装，可设置不同等级的日志颜色
+Log encapsulation, supports setting different log level colors
 """
 import logging
 from logging import handlers
@@ -14,8 +13,8 @@ from common.setting import ensure_path_sep
 
 
 class LogHandler:
-    """ 日志打印封装"""
-    # 日志级别关系映射
+    """ Log printing encapsulation"""
+    # Log level relationship mapping
     level_relations = {
         'debug': logging.DEBUG,
         'info': logging.INFO,
@@ -35,31 +34,31 @@ class LogHandler:
 
         formatter = self.log_color()
 
-        # 设置日志格式
+        # Set log format
         format_str = logging.Formatter(fmt)
-        # 设置日志级别
+        # Set log level
         self.logger.setLevel(self.level_relations.get(level))
-        # 往屏幕上输出
+        # Output to screen
         screen_output = logging.StreamHandler()
-        # 设置屏幕上显示的格式
+        # Set the format displayed on screen
         screen_output.setFormatter(formatter)
-        # 往文件里写入#指定间隔时间自动生成文件的处理器
+        # Write to file # handler that automatically generates files at specified time intervals
         time_rotating = handlers.TimedRotatingFileHandler(
             filename=filename,
             when=when,
             backupCount=3,
             encoding='utf-8'
         )
-        # 设置文件里写入的格式
+        # Set the format written to file
         time_rotating.setFormatter(format_str)
-        # 把对象加到logger里
+        # Add objects to logger
         self.logger.addHandler(screen_output)
         self.logger.addHandler(time_rotating)
         self.log_path = ensure_path_sep('\\logs\\log.log')
 
     @classmethod
     def log_color(cls):
-        """ 设置日志颜色 """
+        """ Set log colors """
         log_colors_config = {
             'DEBUG': 'cyan',
             'INFO': 'green',
@@ -81,4 +80,4 @@ ERROR = LogHandler(ensure_path_sep(f"\\logs\\error-{now_time_day}.log"), level='
 WARNING = LogHandler(ensure_path_sep(f'\\logs\\warning-{now_time_day}.log'))
 
 if __name__ == '__main__':
-    ERROR.logger.error("测试")
+    ERROR.logger.error("test")

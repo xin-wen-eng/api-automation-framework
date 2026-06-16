@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 """
 # @Time    : 2022/5/8 21:37
-# @Author  : 余少琪
 # @Email   : 1603453211@qq.com
 # @File    : error_case_excel
 # @describe:
@@ -18,15 +17,15 @@ from utils.notify.wechat_send import WeChatSend
 from utils.other_tools.allure_data.allure_report_data import AllureFileClean
 
 
-# TODO 还需要处理动态值
+# TODO still needs to handle dynamic values
 class ErrorTestCase:
-    """ 收集错误的excel """
+    """ Collect error excel cases """
     def __init__(self):
         self.test_case_path = ensure_path_sep("\\report\\html\\data\\test-cases\\")
 
     def get_error_case_data(self):
         """
-        收集所有失败用例的数据
+        Collect data for all failed test cases
         @return:
         """
         path = get_all_files(self.test_case_path)
@@ -34,7 +33,7 @@ class ErrorTestCase:
         for i in path:
             with open(i, 'r', encoding='utf-8') as file:
                 date = json.load(file)
-                # 收集执行失败的用例数据
+                # Collect data for failed test cases
                 if date['status'] == 'failed' or date['status'] == 'broken':
                     files.append(date)
         print(files)
@@ -43,7 +42,7 @@ class ErrorTestCase:
     @classmethod
     def get_case_name(cls, test_case):
         """
-        收集测试用例名称
+        Collect test case names
         @return:
         """
         name = test_case['name'].split('[')
@@ -53,8 +52,8 @@ class ErrorTestCase:
     @classmethod
     def get_parameters(cls, test_case):
         """
-        获取allure报告中的 parameters 参数内容, 请求前的数据
-        用于兼容用例执行异常，未发送请求导致的情况
+        Get the parameters content from the allure report, data before the request
+        Used to handle cases where test case execution fails before a request is sent
         @return:
         """
         parameters = test_case['parameters'][0]['value']
@@ -63,7 +62,7 @@ class ErrorTestCase:
     @classmethod
     def get_test_stage(cls, test_case):
         """
-        获取allure报告中请求后的数据
+        Get the data after the request from the allure report
         @return:
         """
         test_stage = test_case['testStage']['steps']
@@ -71,22 +70,22 @@ class ErrorTestCase:
 
     def get_case_url(self, test_case):
         """
-        获取测试用例的 url
+        Get the url of the test case
         @param test_case:
         @return:
         """
-        # 判断用例步骤中的数据是否异常
+        # Check whether the data in the test case steps is abnormal
         if test_case['testStage']['status'] == 'broken':
-            # 如果异常状态下，则获取请求前的数据
+            # If in an abnormal state, get the pre-request data
             _url = self.get_parameters(test_case)['url']
         else:
-            # 否则拿请求步骤的数据，因为如果设计到依赖，会获取多组，因此我们只取最后一组数据内容
+            # Otherwise get the data from the request step; since dependencies may result in multiple sets, only take the last set
             _url = self.get_test_stage(test_case)[-7]['name'][7:]
         return _url
 
     def get_method(self, test_case):
         """
-        获取用例中的请求方式
+        Get the request method used in the test case
         @param test_case:
         @return:
         """
@@ -98,13 +97,13 @@ class ErrorTestCase:
 
     def get_headers(self, test_case):
         """
-        获取用例中的请求头
+        Get the request headers from the test case
         @return:
         """
         if test_case['testStage']['status'] == 'broken':
             _headers = self.get_parameters(test_case)['headers']
         else:
-            # 如果用例请求成功，则从allure附件中获取请求头部信息
+            # If the test case request succeeded, get the request header info from the allure attachment
             _headers_attachment = self.get_test_stage(test_case)[-5]['attachments'][0]['source']
             path = ensure_path_sep("\\report\\html\\data\\attachments\\" + _headers_attachment)
             with open(path, 'r', encoding='utf-8') as file:
@@ -113,7 +112,7 @@ class ErrorTestCase:
 
     def get_request_type(self, test_case):
         """
-        获取用例的请求类型
+        Get the request type of the test case
         @param test_case:
         @return:
         """
@@ -122,7 +121,7 @@ class ErrorTestCase:
 
     def get_case_data(self, test_case):
         """
-        获取用例内容
+        Get the test case content
         @return:
         """
         if test_case['testStage']['status'] == 'broken':
@@ -136,7 +135,7 @@ class ErrorTestCase:
 
     def get_dependence_case(self, test_case):
         """
-        获取依赖用例
+        Get dependent test cases
         @param test_case:
         @return:
         """
@@ -145,7 +144,7 @@ class ErrorTestCase:
 
     def get_sql(self, test_case):
         """
-        获取 sql 数据
+        Get sql data
         @param test_case:
         @return:
         """
@@ -154,7 +153,7 @@ class ErrorTestCase:
 
     def get_assert(self, test_case):
         """
-        获取断言数据
+        Get assertion data
         @param test_case:
         @return:
         """
@@ -164,7 +163,7 @@ class ErrorTestCase:
     @classmethod
     def get_response(cls, test_case):
         """
-        获取响应内容的数据
+        Get the response content data
         @param test_case:
         @return:
         """
@@ -178,14 +177,14 @@ class ErrorTestCase:
                 with open(path, 'r', encoding='utf-8') as file:
                     _res_date = json.load(file)
             except FileNotFoundError:
-                # 程序中没有提取到响应数据，返回None
+                # No response data was extracted from the program, return None
                 _res_date = None
         return _res_date
 
     @classmethod
     def get_case_time(cls, test_case):
         """
-        获取用例运行时长
+        Get the test case run duration
         @param test_case:
         @return:
         """
@@ -196,7 +195,7 @@ class ErrorTestCase:
     @classmethod
     def get_uid(cls, test_case):
         """
-        获取 allure 报告中的 uid
+        Get the uid from the allure report
         @param test_case:
         @return:
         """
@@ -205,47 +204,47 @@ class ErrorTestCase:
 
 
 class ErrorCaseExcel:
-    """ 收集运行失败的用例，整理成excel报告 """
+    """ Collect failed test cases and organize them into an excel report """
     def __init__(self):
-        _excel_template = ensure_path_sep("\\utils\\other_tools\\allure_data\\自动化异常测试用例.xlsx")
-        self._file_path = ensure_path_sep("\\Files\\" + "自动化异常测试用例.xlsx")
+        _excel_template = ensure_path_sep("\\utils\\other_tools\\allure_data\\Automation Exception Test Cases.xlsx")
+        self._file_path = ensure_path_sep("\\Files\\" + "Automation Exception Test Cases.xlsx")
         # if os.path.exists(self._file_path):
         #     os.remove(self._file_path)
 
         shutil.copyfile(src=_excel_template, dst=self._file_path)
-        # 打开程序（只打开不新建)
+        # Open the program (open only, do not create new)
         self.app = xlwings.App(visible=False, add_book=False)
         self.w_book = self.app.books.open(self._file_path, read_only=False)
 
-        # 选取工作表：
-        self.sheet = self.w_book.sheets['异常用例']  # 或通过索引选取
+        # Select worksheet:
+        self.sheet = self.w_book.sheets['Exception Cases']  # or select by index
         self.case_data = ErrorTestCase()
 
     def background_color(self, position: str, rgb: tuple):
         """
-        excel 单元格设置背景色
-        @param rgb: rgb 颜色 rgb=(0，255，0)
-        @param position: 位置，如 A1, B1...
+        Set background color for excel cell
+        @param rgb: rgb color rgb=(0, 255, 0)
+        @param position: position, e.g. A1, B1...
         @return:
         """
-        # 定位到单元格位置
+        # Locate the cell position
         rng = self.sheet.range(position)
         excel_rgb = rng.color = rgb
         return excel_rgb
 
     def column_width(self, position: str, width: int):
         """
-        设置列宽
+        Set column width
         @return:
         """
         rng = self.sheet.range(position)
-        # 列宽
+        # Column width
         excel_column_width = rng.column_width = width
         return excel_column_width
 
     def row_height(self, position, height):
         """
-        设置行高
+        Set row height
         @param position:
         @param height:
         @return:
@@ -256,7 +255,7 @@ class ErrorCaseExcel:
 
     def column_width_adaptation(self, position):
         """
-        excel 所有列宽度自适应
+        Auto-fit all column widths in excel
         @return:
         """
         rng = self.sheet.range(position)
@@ -265,7 +264,7 @@ class ErrorCaseExcel:
 
     def row_width_adaptation(self, position):
         """
-        excel 设置所有行宽自适应
+        Set all row widths to auto-fit in excel
         @return:
         """
         rng = self.sheet.range(position)
@@ -274,7 +273,7 @@ class ErrorCaseExcel:
 
     def write_excel_content(self, position: str, value: str):
         """
-        excel 中写入内容
+        Write content to excel
         @param value:
         @param position:
         @return:
@@ -283,12 +282,12 @@ class ErrorCaseExcel:
 
     def write_case(self):
         """
-        用例中写入失败用例数据
+        Write failed test case data into the case
         @return:
         """
 
         _data = self.case_data.get_error_case_data()
-        # 判断有数据才进行写入
+        # Only write if there is data
         if len(_data) > 0:
             num = 2
             for data in _data:
@@ -308,7 +307,7 @@ class ErrorCaseExcel:
             self.w_book.save()
             self.w_book.close()
             self.app.quit()
-            # 有数据才发送企业微信
+            # Only send WeCom notification if there is data
             WeChatSend(AllureFileClean().get_case_count()).send_file_msg(self._file_path)
 
 

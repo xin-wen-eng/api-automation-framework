@@ -1,7 +1,7 @@
 """
-Desc : 自定义函数调用
-# @Time : 2022/4/2 9:32 上午
-# @Author : 余少琪
+Desc : Custom function calls
+# @Time : 2022/4/2 9:32 AM
+# @Author : Yu Shaoqi
 """
 import re
 import datetime
@@ -13,21 +13,21 @@ from utils.logging_tool.log_control import ERROR
 
 
 class Context:
-    """ 正则替换 """
+    """ Regex replacement """
     def __init__(self):
         self.faker = Faker(locale='zh_CN')
 
     @classmethod
     def random_int(cls) -> int:
         """
-        :return: 随机数
+        :return: Random number
         """
         _data = random.randint(0, 5000)
         return _data
 
     def get_phone(self) -> int:
         """
-        :return: 随机生成手机号码
+        :return: Randomly generated phone number
         """
         phone = self.faker.phone_number()
         return phone
@@ -35,7 +35,7 @@ class Context:
     def get_id_number(self) -> int:
         """
 
-        :return: 随机生成身份证号码
+        :return: Randomly generated ID card number
         """
 
         id_number = self.faker.ssn()
@@ -44,7 +44,7 @@ class Context:
     def get_female_name(self) -> str:
         """
 
-        :return: 女生姓名
+        :return: Female name
         """
         female_name = self.faker.name_female()
         return female_name
@@ -52,7 +52,7 @@ class Context:
     def get_male_name(self) -> str:
         """
 
-        :return: 男生姓名
+        :return: Male name
         """
         male_name = self.faker.name_male()
         return male_name
@@ -60,21 +60,21 @@ class Context:
     def get_email(self) -> str:
         """
 
-        :return: 生成邮箱
+        :return: Generate email
         """
         email = self.faker.email()
         return email
 
     @classmethod
     def self_operated_id(cls):
-        """自营店铺 ID """
+        """Self-operated store ID """
         operated_id = 212
         return operated_id
 
     @classmethod
     def get_time(cls) -> str:
         """
-        计算当前时间
+        Calculate current time
         :return:
         """
         now_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -82,14 +82,14 @@ class Context:
 
     @classmethod
     def today_date(cls):
-        """获取今日0点整时间"""
+        """Get today's date at midnight"""
 
         _today = date.today().strftime("%Y-%m-%d") + " 00:00:00"
         return str(_today)
 
     @classmethod
     def time_after_week(cls):
-        """获取一周后12点整的时间"""
+        """Get the time one week later at midnight"""
 
         _time_after_week = (date.today() + timedelta(days=+6)).strftime("%Y-%m-%d") + " 00:00:00"
         return _time_after_week
@@ -97,28 +97,28 @@ class Context:
     @classmethod
     def host(cls) -> str:
         from utils import config
-        """ 获取接口域名 """
+        """ Get the API domain """
         return config.host
 
     @classmethod
     def app_host(cls) -> str:
         from utils import config
-        """获取app的host"""
+        """Get the app host"""
         return config.app_host
 
 
 def sql_json(js_path, res):
-    """ 提取 sql中的 json 数据 """
+    """ Extract json data from sql """
     _json_data = jsonpath(res, js_path)[0]
     if _json_data is False:
-        raise ValueError(f"sql中的jsonpath获取失败 {res}, {js_path}")
+        raise ValueError(f"Failed to get jsonpath from sql {res}, {js_path}")
     return jsonpath(res, js_path)[0]
 
 
 def sql_regular(value, res=None):
     """
-    这里处理sql中的依赖数据，通过获取接口响应的jsonpath的值进行替换
-    :param res: jsonpath使用的返回结果
+    This handles dependent data in sql, replacing values by getting the jsonpath value from the API response
+    :param res: return result used by jsonpath
     :param value:
     :return:
     """
@@ -136,15 +136,15 @@ def cache_regular(value):
     from utils.cache_process.cache_control import CacheHandler
 
     """
-    通过正则的方式，读取缓存中的内容
-    例：$cache{login_init}
+    Read cache contents using regex
+    Example: $cache{login_init}
     :param value:
     :return:
     """
-    # 正则获取 $cache{login_init}中的值 --> login_init
+    # Use regex to get the value inside $cache{login_init} --> login_init
     regular_dates = re.findall(r"\$cache\{(.*?)\}", value)
 
-    # 拿到的是一个list，循环数据
+    # The result is a list, iterate over the data
     for regular_data in regular_dates:
         value_types = ['int:', 'bool:', 'list:', 'dict:', 'tuple:', 'float:']
         if any(i in regular_data for i in value_types) is True:
@@ -159,7 +159,7 @@ def cache_regular(value):
         try:
             # cache_data = Cache(regular_data).get_cache()
             cache_data = CacheHandler.get_cache(regular_data)
-            # 使用sub方法，替换已经拿到的内容
+            # Use sub method to replace the already retrieved content
             value = re.sub(pattern, str(cache_data), value)
         except Exception:
             pass
@@ -168,8 +168,8 @@ def cache_regular(value):
 
 def regular(target):
     """
-    新版本
-    使用正则替换请求数据
+    New version
+    Use regex to replace request data
     :return:
     """
     try:
@@ -197,7 +197,7 @@ def regular(target):
         return target
 
     except AttributeError:
-        ERROR.logger.error("未找到对应的替换的数据, 请检查数据是否正确 %s", target)
+        ERROR.logger.error("Corresponding replacement data not found, please check if the data is correct %s", target)
         raise
 
 

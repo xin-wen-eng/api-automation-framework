@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 """
 # @Time    : 2022/6/2 11:30
-# @Author  : 余少琪
 # @Email   : 1603453211@qq.com
 # @File    : set_current_request_cache
 # @describe:
@@ -15,7 +14,7 @@ from utils.cache_process.cache_control import CacheHandler
 
 
 class SetCurrentRequestCache:
-    """将用例中的请求或者响应内容存入缓存"""
+    """Store the request or response content from a test case into cache"""
 
     def __init__(
             self,
@@ -31,7 +30,7 @@ class SetCurrentRequestCache:
             self,
             jsonpath_value: Text,
             cache_name: Text) -> None:
-        """将接口的请求参数存入缓存"""
+        """Store the interface request parameters into cache"""
         _request_data = jsonpath(
             self.request_data,
             jsonpath_value
@@ -41,9 +40,9 @@ class SetCurrentRequestCache:
             # Cache(cache_name).set_caches(_request_data[0])
         else:
             raise ValueNotFoundError(
-                "缓存设置失败，程序中未检测到需要缓存的数据。"
-                f"请求参数: {self.request_data}"
-                f"提取的 jsonpath 内容: {jsonpath_value}"
+                "Cache setup failed, the data to be cached was not detected in the program."
+                f"Request parameters: {self.request_data}"
+                f"Extracted jsonpath content: {jsonpath_value}"
             )
 
     def set_response_cache(
@@ -51,18 +50,18 @@ class SetCurrentRequestCache:
             jsonpath_value: Text,
             cache_name
     ):
-        """将响应结果存入缓存"""
+        """Store the response result into cache"""
         _response_data = jsonpath(json.loads(self.response_data), jsonpath_value)
         if _response_data is not False:
             CacheHandler.update_cache(cache_name=cache_name, value=_response_data[0])
             # Cache(cache_name).set_caches(_response_data[0])
         else:
-            raise ValueNotFoundError("缓存设置失败，程序中未检测到需要缓存的数据。"
-                                     f"请求参数: {self.response_data}"
-                                     f"提取的 jsonpath 内容: {jsonpath_value}")
+            raise ValueNotFoundError("Cache setup failed, the data to be cached was not detected in the program."
+                                     f"Request parameters: {self.response_data}"
+                                     f"Extracted jsonpath content: {jsonpath_value}")
 
     def set_caches_main(self):
-        """设置缓存"""
+        """Set cache"""
         if self.current_request_set_cache is not None:
             for i in self.current_request_set_cache:
                 _jsonpath = i.jsonpath

@@ -2,10 +2,9 @@
 # -*- coding: utf-8 -*-
 """
 # @Time    : 2022/5/10 14:02
-# @Author  : 余少琪
 # @Email   : 1603453211@qq.com
 # @File    : install_requirements
-# @describe: 判断程序是否每次会更新依赖库，如有更新，则自动安装
+# @describe: Check whether the program updates dependency libraries each time; if updated, install automatically
 """
 import os
 import chardet
@@ -17,7 +16,7 @@ os.system("pip3 install chardet")
 
 
 class InstallRequirements:
-    """ 自动识别安装最新的依赖库 """
+    """ Automatically detect and install the latest dependency libraries """
 
     def __init__(self):
         self.version_library_comparisons_path = ensure_path_sep("\\utils\\other_tools\\install_tool\\") \
@@ -26,13 +25,13 @@ class InstallRequirements:
                                  + os.sep + "requirements.txt"
 
         self.mirror_url = config.mirror_source
-        # 初始化时，获取最新的版本库
+        # On initialization, retrieve the latest version library
 
         # os.system("pip freeze > {0}".format(self.requirements_path))
 
     def read_version_library_comparisons_txt(self):
         """
-        获取版本比对默认的文件
+        Get the default version comparison file
         @return:
         """
         with open(self.version_library_comparisons_path, 'r', encoding="utf-8") as file:
@@ -40,14 +39,14 @@ class InstallRequirements:
 
     @classmethod
     def check_charset(cls, file_path):
-        """获取文件的字符集"""
+        """Get the character set of the file"""
         with open(file_path, "rb") as file:
             data = file.read(4)
             charset = chardet.detect(data)['encoding']
         return charset
 
     def read_requirements(self):
-        """获取安装文件"""
+        """Get the installation file"""
         file_data = ""
         with open(
                 self.requirements_path,
@@ -56,8 +55,8 @@ class InstallRequirements:
         ) as file:
 
             for line in file:
-                if "[0m" in line:
-                    line = line.replace("[0m", "")
+                if "[0m" in line:
+                    line = line.replace("[0m", "")
                 file_data += line
 
         with open(
@@ -71,16 +70,16 @@ class InstallRequirements:
 
     def text_comparison(self):
         """
-        版本库比对
+        Version library comparison
         @return:
         """
         read_version_library_comparisons_txt = self.read_version_library_comparisons_txt()
         read_requirements = self.read_requirements()
         if read_version_library_comparisons_txt == read_requirements:
-            INFO.logger.info("程序中未检查到更新版本库，已为您跳过自动安装库")
-        # 程序中如出现不同的文件，则安装
+            INFO.logger.info("No updated version library detected in the program, automatic library installation has been skipped")
+        # If different files are found in the program, install
         else:
-            INFO.logger.info("程序中检测到您更新了依赖库，已为您自动安装")
+            INFO.logger.info("An updated dependency library was detected in the program, automatic installation has been performed")
             os.system(f"pip3 install -r {self.requirements_path}")
             with open(self.version_library_comparisons_path, "w",
                       encoding=self.check_charset(self.requirements_path)) as file:

@@ -1,35 +1,35 @@
-# 公共参数
+# Common parameters
 case_common:
-  allureEpic: 开发平台接口
-  allureFeature: 登录模块
-  allureStory: 登录
+  allureEpic: Development Platform API
+  allureFeature: Login Module
+  allureStory: Login
 
 login_01:
     host: ${{host()}}
     url: /user/login
     method: POST
-    detail: 正常登录
+    detail: Normal login
     headers:
 #      Content-Type: multipart/form-data;
-    # 请求的数据，是 params 还是 json、或者file、data
+    # Request data type: params, json, file, or data
     requestType: data
-    # 是否执行，空或者 true 都会执行
+    # Whether to execute; empty or true means it will execute
     is_run:
     data:
       username: '18800000001'
       password: '123456'
-      # 是否有依赖业务，为空或者false则表示没有
+      # Whether there are dependent cases; empty or false means none
     dependence_case: False
-        # 依赖的数据
+        # Dependent data
     dependence_case_data:
     assert:
-      # 断言接口状态码
+      # Assert interface status code
       errorCode:
         jsonpath: $.errorCode
         type: ==
         value: 0
         AssertType:
-      # 断言接口返回的username
+      # Assert interface returned username
       username:
         jsonpath: $.data.username
         type: ==
@@ -41,32 +41,32 @@ login_02:
     host: ${{host()}}
     url: /user/login
     method: POST
-    detail: 输入错误的密码
+    detail: Enter incorrect password
     headers:
       Content-Type: multipart/form-data;
-    # 请求的数据，是 params 还是 json、或者file、data
+    # Request data type: params, json, file, or data
     requestType: data
-    # 是否执行，空或者 true 都会执行
+    # Whether to execute; empty or true means it will execute
     is_run:
     data:
       username: '18800000001'
       password: '12345'
-      # 是否有依赖业务，为空或者false则表示没有
+      # Whether there are dependent cases; empty or false means none
     dependence_case: False
-        # 依赖的数据
+        # Dependent data
     dependence_case_data:
     assert:
-      # 断言接口状态码
+      # Assert interface status code
       errorCode:
         jsonpath: $.errorCode
         type: ==
         value: -1
         AssertType:
-      # 断言接口返回的username
+      # Assert interface returned username
       errorMsg:
         jsonpath: $.errorMsg
         type: ==
-        value: "账号密码不匹配！"
+        value: "Account and password do not match!"
         AssertType:
     sql:
 
@@ -74,32 +74,32 @@ login_03:
     host: ${{host()}}
     url: /user/login
     method: POST
-    detail: 登录密码为空
+    detail: Login password is empty
     headers:
       Content-Type: multipart/form-data;
-    # 请求的数据，是 params 还是 json、或者file、data
+    # Request data type: params, json, file, or data
     requestType: data
-    # 是否执行，空或者 true 都会执行
+    # Whether to execute; empty or true means it will execute
     is_run:
     data:
       username: '18800000001'
       password:
-      # 是否有依赖业务，为空或者false则表示没有
+      # Whether there are dependent cases; empty or false means none
     dependence_case: False
-        # 依赖的数据
+        # Dependent data
     dependence_case_data:
     assert:
-      # 断言接口状态码
+      # Assert interface status code
       errorCode:
         jsonpath: $.errorCode
         type: ==
         value: -1
         AssertType:
-      # 断言接口返回的username
+      # Assert interface returned username
       errorMsg:
         jsonpath: $.errorMsg
         type: ==
-        value: "账号密码不匹配！"
+        value: "Account and password do not match!"
         AssertType:
     sql:
 
@@ -107,32 +107,32 @@ login_04:
     host: ${{host()}}
     url: /user/login
     method: POST
-    detail: 输入非1开头的手机号码
+    detail: Enter a phone number not starting with 1
     headers:
       Content-Type: multipart/form-data;
-    # 请求的数据，是 params 还是 json、或者file、data
+    # Request data type: params, json, file, or data
     requestType: data
-    # 是否执行，空或者 true 都会执行
+    # Whether to execute; empty or true means it will execute
     is_run:
     data:
       username: '28800000001'
       password: '12345'
-      # 是否有依赖业务，为空或者false则表示没有
+      # Whether there are dependent cases; empty or false means none
     dependence_case: False
-        # 依赖的数据
+        # Dependent data
     dependence_case_data:
     assert:
-      # 断言接口状态码
+      # Assert interface status code
       errorCode:
         jsonpath: $.errorCode
         type: ==
         value: -1
         AssertType:
-      # 断言接口返回的username
+      # Assert interface returned username
       errorMsg:
         jsonpath: $.errorMsg
         type: ==
-        value: "账号密码不匹配！"
+        value: "Account and password do not match!"
         AssertType:
     sql:
 
@@ -140,32 +140,32 @@ login_05:
     host: ${{host()}}
     url: /user/login
     method: POST
-    detail: 输入手机号码小于11位
+    detail: Enter a phone number with fewer than 11 digits
     headers:
       Content-Type: multipart/form-data;
-    # 请求的数据，是 params 还是 json、或者file、data
+    # Request data type: params, json, file, or data
     requestType: data
-    # 是否执行，空或者 true 都会执行
+    # Whether to execute; empty or true means it will execute
     is_run:
     data:
       username: '1880000000'
       password: '12345'
-      # 是否有依赖业务，为空或者false则表示没有
+      # Whether there are dependent cases; empty or false means none
     dependence_case: False
-        # 依赖的数据
+        # Dependent data
     dependence_case_data:
     assert:
-      # 断言接口状态码
+      # Assert interface status code
       errorCode:
         jsonpath: $.errorCode
         type: ==
         value: -1
         AssertType:
-      # 断言接口返回的username
+      # Assert interface returned username
       errorMsg:
         jsonpath: $.errorMsg
         type: ==
-        value: "账号密码不匹配！"
+        value: "Account and password do not match!"
         AssertType:
     sql:
 
@@ -173,32 +173,32 @@ login_06:
     host: ${{host()}}
     url: /user/login
     method: POST
-    detail: 输入手机号码大于于11位
+    detail: Enter a phone number with more than 11 digits
     headers:
       Content-Type: multipart/form-data;
-    # 请求的数据，是 params 还是 json、或者file、data
+    # Request data type: params, json, file, or data
     requestType: data
-    # 是否执行，空或者 true 都会执行
+    # Whether to execute; empty or true means it will execute
     is_run:
     data:
       username: '18800000000'
       password: '12345'
-      # 是否有依赖业务，为空或者false则表示没有
+      # Whether there are dependent cases; empty or false means none
     dependence_case: False
-        # 依赖的数据
+        # Dependent data
     dependence_case_data:
     assert:
-      # 断言接口状态码
+      # Assert interface status code
       errorCode:
         jsonpath: $.errorCode
         type: ==
         value: -1
         AssertType:
-      # 断言接口返回的username
+      # Assert interface returned username
       errorMsg:
         jsonpath: $.errorMsg
         type: ==
-        value: "账号密码不匹配！"
+        value: "Account and password do not match!"
         AssertType:
     sql:
 
@@ -206,32 +206,32 @@ login_07:
     host: ${{host()}}
     url: /user/login
     method: POST
-    detail: 手机号码为空
+    detail: Phone number is empty
     headers:
       Content-Type: multipart/form-data;
-    # 请求的数据，是 params 还是 json、或者file、data
+    # Request data type: params, json, file, or data
     requestType: data
-    # 是否执行，空或者 true 都会执行
+    # Whether to execute; empty or true means it will execute
     is_run:
     data:
       username:
       password: '12345'
-      # 是否有依赖业务，为空或者false则表示没有
+      # Whether there are dependent cases; empty or false means none
     dependence_case: False
-        # 依赖的数据
+        # Dependent data
     dependence_case_data:
     assert:
-      # 断言接口状态码
+      # Assert interface status code
       errorCode:
         jsonpath: $.errorCode
         type: ==
         value: -1
         AssertType:
-      # 断言接口返回的username
+      # Assert interface returned username
       errorMsg:
         jsonpath: $.errorMsg
         type: ==
-        value: "账号密码不匹配！"
+        value: "Account and password do not match!"
         AssertType:
     sql:
 
@@ -239,31 +239,31 @@ login_08:
     host: ${{host()}}
     url: /user/login
     method: POST
-    detail: 手机号码首位包含空格
+    detail: Phone number contains leading/trailing spaces
     headers:
       Content-Type: multipart/form-data;
-    # 请求的数据，是 params 还是 json、或者file、data
+    # Request data type: params, json, file, or data
     requestType: data
-    # 是否执行，空或者 true 都会执行
+    # Whether to execute; empty or true means it will execute
     is_run:
     data:
       username: ' 18867507063 '
       password: '12345'
-      # 是否有依赖业务，为空或者false则表示没有
+      # Whether there are dependent cases; empty or false means none
     dependence_case: False
-        # 依赖的数据
+        # Dependent data
     dependence_case_data:
     assert:
-      # 断言接口状态码
+      # Assert interface status code
       errorCode:
         jsonpath: $.errorCode
         type: ==
         value: -1
         AssertType:
-      # 断言接口返回的username
+      # Assert interface returned username
       errorMsg:
         jsonpath: $.errorMsg
         type: ==
-        value: "账号密码不匹配！"
+        value: "Account and password do not match!"
         AssertType:
     sql:
