@@ -2,6 +2,8 @@
 
 A data-driven API test framework built with Python, pytest, and Allure. Test cases are defined in YAML — no per-case code required.
 
+<img width="1389" height="868" alt="image" src="https://github.com/user-attachments/assets/4d3d60cd-3529-4ea1-87b1-b540ba04b137" />
+
 ## Stack
 
 - Python + pytest
